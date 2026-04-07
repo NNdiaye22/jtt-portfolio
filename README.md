@@ -42,6 +42,24 @@ jtt-portfolio/
 4. Sélectionnez le ZIP et cliquez **Installer maintenant**
 5. **Activer** le thème
 
+### Étape 1b - Importer le contenu exemple (optionnel)
+
+Pour gagner du temps, vous pouvez importer le fichier `sample-content.xml` qui contient :
+- Les pages de base (Accueil, Travaux, Contact)
+- 3 projets exemples (The Suit, Negus, Stripology) avec leurs métadonnées et sections
+- Les catégories de projets (Reportage, Photo, Vidéo)
+
+**Comment importer :**
+
+1. Aller dans **Outils** > **Importer**
+2. Choisir **WordPress** (si pas installé, cliquer sur "Installer maintenant")
+3. Cliquer sur **Lancer l'importateur**
+4. Sélectionner le fichier `sample-content.xml` depuis le dossier du thème
+5. **Important** : Cocher "Télécharger et importer les fichiers joints" si vous voulez les images
+6. Cliquer sur **Soumettre**
+
+**Note** : Les URLs des images dans le fichier exemple utilisent des placeholders (`placeholder.com`). Vous devrez les remplacer par vos vraies images dans l'éditeur WordPress.
+
 ### Étape 2 — Créer les pages
 
 Dans **Pages > Ajouter** :
