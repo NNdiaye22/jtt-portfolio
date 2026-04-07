@@ -1,170 +1,254 @@
-<?php get_header(); ?>
-
 <?php
-$hero_img    = get_field('project_hero_image');
-$hero_url    = $hero_img ? esc_url($hero_img['url']) : get_the_post_thumbnail_url(get_the_ID(), 'full');
-$hero_alt    = $hero_img ? esc_attr($hero_img['alt']) : esc_attr(get_the_title());
-$year        = get_field('project_year') ?: date('Y');
-$model       = get_field('project_model');
-$category    = get_field('project_category');
-$desc        = get_field('project_description');
-$intro_title = get_field('project_intro_title');
-$mood_img    = get_field('project_mood_image');
-$creative_img= get_field('project_creative_image');
-$quote_text  = get_field('project_quote');
-$quote_author= get_field('project_quote_author');
-$gallery     = get_field('project_gallery');
-$credits     = get_field('project_credits');
+/**
+ * Template : Page projet individuel (single-projet.php)
+ *
+ * Gère un nombre variable de sections par projet :
+ * Moodboard, Editorial, Squetches, Tech Pack, Shooting,
+ * Creative Direction, Figures of Influence, One Size System,
+ * Toiles, In Fabric, etc.
+ *
+ * Chaque section est stockée dans un repeater ACF "project_sections".
+ * Si ACF n'est pas actif, affiche le contenu natif WordPress.
+ *
+ * @package jtt-portfolio
+ */
+
+get_header();
+
+if ( ! have_posts() ) {
+  wp_redirect( home_url() );
+  exit;
+}
+
+the_post();
+
+// ── Champs de base ────────────────────────────────────────────────
+$annee      = get_post_meta( get_the_ID(), 'projet_annee',       true );
+$sous_titre = get_post_meta( get_the_ID(), 'projet_sous_titre',  true ); // ex. "ORANGE IS THE NEW BLACK - 2025"
+$editorial  = get_post_meta( get_the_ID(), 'projet_editorial',   true ); // texte éditorial
+$en_prod    = get_post_meta( get_the_ID(), 'projet_en_production', true ); // true/false
+
+// ── Sections dynamiques ───────────────────────────────────────────
+// Stockées dans un meta JSON : tableau de {titre, type, images[], texte}
+$sections_raw = get_post_meta( get_the_ID(), 'projet_sections_json', true );
+$sections     = $sections_raw ? json_decode( $sections_raw, true ) : array();
+
+// Fallback : si aucune section, on affiche le contenu natif
+$has_sections = ! empty( $sections );
+
+// ── Image hero = featured image ───────────────────────────────────
+$hero_url = get_the_post_thumbnail_url( get_the_ID(), 'full' );
+$hero_alt = get_the_title();
+
+// ── Projets similaires ────────────────────────────────────────────
+$cats = get_the_terms( get_the_ID(), 'categorie_projet' );
+$related_args = array(
+  'post_type'      => 'projet',
+  'posts_per_page' => 3,
+  'post__not_in'   => array( get_the_ID() ),
+  'post_status'    => 'publish',
+  'orderby'        => 'rand',
+);
+if ( $cats && ! is_wp_error( $cats ) ) {
+  $related_args['tax_query'] = array(
+    array(
+      'taxonomy' => 'categorie_projet',
+      'field'    => 'term_id',
+      'terms'    => wp_list_pluck( $cats, 'term_id' ),
+    ),
+  );
+}
+$related = new WP_Query( $related_args );
 ?>
 
-<main id="main-content">
+<main id="main" class="site-main projet-single" role="main">
 
-<!-- LIGHTBOX OVERLAY -->
-<div id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Aper&ccedil;u image">
-    <button id="lb-close" aria-label="Fermer">&times;</button>
-    <button id="lb-prev" aria-label="Pr&eacute;c&eacute;dent">&#8592;</button>
-    <button id="lb-next" aria-label="Suivant">&#8594;</button>
-    <img src="" alt="" id="lightbox-img" draggable="false">
-    <span class="lb-counter" id="lb-counter"></span>
-</div>
+  <!-- ════════════════════════════════
+       HERO DU PROJET
+  ════════════════════════════════ -->
+  <section class="projet-hero reveal">
 
-<!-- HERO -->
-<section class="col-hero">
-    <div class="col-hero-bg">
-        <?php if ($hero_url) : ?>
-        <img class="lightbox-trigger" data-full="<?php echo $hero_url; ?>"
-             src="<?php echo $hero_url; ?>" alt="<?php echo $hero_alt; ?>"
-             loading="eager" fetchpriority="high">
-        <?php endif; ?>
+    <div class="projet-hero-texte">
+      <h1 class="projet-titre"><?php the_title(); ?></h1>
+
+      <?php if ( $sous_titre ) : ?>
+        <p class="projet-sous-titre"><?php echo esc_html( $sous_titre ); ?></p>
+      <?php elseif ( $annee ) : ?>
+        <p class="projet-sous-titre"><?php echo esc_html( $annee ); ?></p>
+      <?php endif; ?>
     </div>
-    <div class="col-hero-content">
-        <p class="col-hero-label">Collection <?php echo esc_html($year); ?></p>
-        <h1 class="col-hero-title"><?php the_title(); ?></h1>
-        <?php if ($model) : ?>
-        <p class="col-hero-sub"><?php echo esc_html($model); ?> &nbsp;&nbsp; <?php echo esc_html(get_the_author_meta('display_name')); ?></p>
-        <?php endif; ?>
+
+    <?php if ( $hero_url ) : ?>
+      <div class="projet-hero-img">
+        <img src="<?php echo esc_url( $hero_url ); ?>" alt="<?php echo esc_attr( $hero_alt ); ?>" loading="eager">
+      </div>
+    <?php endif; ?>
+
+  </section>
+
+  <!-- ════════════════════════════════
+       ÉDITORIAL (texte intro)
+  ════════════════════════════════ -->
+  <?php if ( $editorial || get_the_content() ) : ?>
+  <section class="projet-editorial reveal" aria-labelledby="editorial-titre">
+    <div class="section-inner projet-editorial-inner">
+      <h2 class="sr-only" id="editorial-titre"><?php esc_html_e( 'Editorial', 'jtt-portfolio' ); ?></h2>
+      <div class="projet-editorial-texte">
+        <?php
+        if ( $editorial ) {
+          echo wp_kses_post( wpautop( $editorial ) );
+        } else {
+          the_content();
+        }
+        ?>
+      </div>
     </div>
-    <div class="col-hero-scroll" aria-hidden="true">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
-    </div>
-</section>
+  </section>
+  <?php endif; ?>
 
-<!-- INTRO -->
-<section class="section-intro reveal">
-    <div class="intro-meta">
-        <?php if ($year) : ?>
-        <div class="meta-block">
-            <p class="meta-label">Ann&eacute;e</p>
-            <p class="meta-value"><?php echo esc_html($year); ?></p>
-        </div>
-        <?php endif; ?>
-        <?php if ($model) : ?>
-        <div class="meta-block">
-            <p class="meta-label">Mod&egrave;le</p>
-            <p class="meta-value"><?php echo esc_html($model); ?></p>
-        </div>
-        <?php endif; ?>
-        <div class="meta-block">
-            <p class="meta-label">Styliste</p>
-            <p class="meta-value">Julien Terence Tegnan</p>
-        </div>
-        <?php if ($category) : ?>
-        <div class="meta-block">
-            <p class="meta-label">Cat&eacute;gorie</p>
-            <p class="meta-value"><?php echo esc_html($category); ?></p>
-        </div>
-        <?php endif; ?>
-    </div>
-    <div class="intro-text reveal">
-        <?php if ($intro_title) : ?>
-        <h2 class="intro-title"><?php echo esc_html($intro_title); ?></h2>
-        <?php endif; ?>
-        <?php if ($desc) : ?>
-        <div class="intro-body"><?php echo wp_kses_post($desc); ?></div>
-        <?php else : the_content(); endif; ?>
-    </div>
-</section>
+  <!-- ════════════════════════════════
+       SECTIONS DYNAMIQUES
+       (Moodboard, Squetches, Tech Pack,
+        Shooting, Toiles, etc.)
+  ════════════════════════════════ -->
+  <?php if ( $has_sections ) : ?>
 
-<?php if ($mood_img) : ?>
-<!-- MOOD BOARD -->
-<div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Mood Board</span><div class="section-label-line"></div></div>
-<div class="mood-single reveal-img lightbox-trigger" data-full="<?php echo esc_url($mood_img['url']); ?>">
-    <img src="<?php echo esc_url($mood_img['url']); ?>" alt="<?php echo esc_attr($mood_img['alt']); ?>" loading="lazy">
-</div>
-<?php endif; ?>
-
-<?php if ($creative_img) : ?>
-<!-- CREATIVE DIRECTION -->
-<div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Creative Direction</span><div class="section-label-line"></div></div>
-<div class="creative-single reveal-img lightbox-trigger" data-full="<?php echo esc_url($creative_img['url']); ?>">
-    <img src="<?php echo esc_url($creative_img['url']); ?>" alt="<?php echo esc_attr($creative_img['alt']); ?>" loading="lazy">
-</div>
-<?php endif; ?>
-
-<?php if ($quote_text) : ?>
-<!-- QUOTE -->
-<div class="quote-divider reveal">
-    <span class="quote-mark">&ldquo;</span>
-    <p class="quote-text"><?php echo esc_html($quote_text); ?></p>
-    <?php if ($quote_author) : ?><p class="quote-author"><?php echo esc_html($quote_author); ?></p><?php endif; ?>
-</div>
-<?php endif; ?>
-
-<?php if ($gallery) : ?>
-<!-- SHOOTING -->
-<div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Shooting</span><div class="section-label-line"></div></div>
-<div class="shooting-grid">
-    <?php foreach ($gallery as $i => $img) : ?>
-    <div class="shoot-item <?php echo $i === 0 ? 'featured' : ''; ?> reveal-img lightbox-trigger"
-         data-full="<?php echo esc_url($img['url']); ?>">
-        <img src="<?php echo esc_url($img['url']); ?>" alt="<?php echo esc_attr($img['alt']); ?>" loading="lazy">
-        <span class="shoot-num"><?php echo str_pad($i+1, 2, '0', STR_PAD_LEFT); ?></span>
-    </div>
-    <?php endforeach; ?>
-</div>
-<?php endif; ?>
-
-<?php if ($credits) : ?>
-<!-- CREDITS -->
-<div class="section-label"><div class="section-label-line"></div><span class="section-label-text">Cr&eacute;dits</span><div class="section-label-line"></div></div>
-<div class="section-credits reveal">
-    <?php foreach ($credits as $credit) : ?>
-    <div class="credit-block">
-        <p class="credit-role"><?php echo esc_html($credit['role']); ?></p>
-        <p class="credit-name"><?php echo esc_html($credit['name']); ?></p>
-    </div>
-    <?php endforeach; ?>
-</div>
-<?php endif; ?>
-
-<!-- NEXT COLLECTIONS -->
-<?php
-$others = jtt_get_other_projets(get_the_ID(), 3);
-if ($others->have_posts()) :
-?>
-<div class="next-header reveal">
-    <p class="next-header-text">Autres collections</p>
-</div>
-<div class="next-collections">
-    <?php while ($others->have_posts()) : $others->the_post();
-        $nimg = get_field('project_hero_image');
-        $nurl = $nimg ? esc_url($nimg['url']) : get_the_post_thumbnail_url(get_the_ID(), 'large');
-        $nyear= get_field('project_year') ?: date('Y');
+    <?php foreach ( $sections as $index => $section ) :
+      $s_titre  = isset( $section['titre']  ) ? sanitize_text_field( $section['titre']  ) : '';
+      $s_type   = isset( $section['type']   ) ? sanitize_key(        $section['type']   ) : 'galerie'; // galerie | texte | galerie-texte | pdf
+      $s_texte  = isset( $section['texte']  ) ? wp_kses_post(        $section['texte']  ) : '';
+      $s_images = isset( $section['images'] ) ? (array)              $section['images']   : array();
+      $s_id     = 'section-' . sanitize_title( $s_titre ?: $index );
     ?>
-    <a href="<?php the_permalink(); ?>" class="next-item">
-        <?php if ($nurl) : ?>
-        <img src="<?php echo $nurl; ?>" alt="<?php the_title_attribute(); ?>" loading="lazy">
+
+    <section
+      id="<?php echo esc_attr( $s_id ); ?>"
+      class="projet-section projet-section--<?php echo esc_attr( $s_type ); ?> reveal"
+      aria-labelledby="<?php echo esc_attr( $s_id ); ?>-titre"
+    >
+      <div class="section-inner">
+
+        <?php if ( $s_titre ) : ?>
+          <h2 class="projet-section-titre" id="<?php echo esc_attr( $s_id ); ?>-titre">
+            <?php echo esc_html( $s_titre ); ?>
+          </h2>
         <?php endif; ?>
-        <div class="next-overlay">
-            <span class="next-label">Collection <?php echo esc_html($nyear); ?></span>
-            <span class="next-title"><?php the_title(); ?></span>
-            <div class="next-arrow"></div>
+
+        <?php if ( $s_texte ) : ?>
+          <div class="projet-section-texte">
+            <?php echo wpautop( $s_texte ); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ( ! empty( $s_images ) ) : ?>
+          <div class="projet-section-galerie" data-count="<?php echo count( $s_images ); ?>">
+            <?php foreach ( $s_images as $img ) :
+              $img_url = is_array( $img ) ? ( $img['url'] ?? '' ) : $img;
+              $img_alt = is_array( $img ) ? ( $img['alt'] ?? $s_titre ) : $s_titre;
+              if ( ! $img_url ) continue;
+            ?>
+              <figure class="projet-img-figure">
+                <a href="<?php echo esc_url( $img_url ); ?>" class="projet-img-link" data-lightbox="<?php echo esc_attr( $s_id ); ?>">
+                  <img
+                    src="<?php echo esc_url( $img_url ); ?>"
+                    alt="<?php echo esc_attr( $img_alt ); ?>"
+                    loading="lazy"
+                  >
+                </a>
+              </figure>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+
+      </div>
+    </section>
+
+    <?php endforeach; ?>
+
+  <?php else : ?>
+    <!-- Pas de sections JSON : affichage du contenu natif WordPress -->
+    <?php if ( has_post_thumbnail() ) : ?>
+    <section class="projet-section projet-section--galerie reveal">
+      <div class="section-inner">
+        <div class="projet-section-galerie">
+          <figure class="projet-img-figure">
+            <?php the_post_thumbnail( 'large', array( 'loading' => 'lazy' ) ); ?>
+          </figure>
         </div>
-    </a>
-    <?php endwhile; wp_reset_postdata(); ?>
-</div>
-<?php endif; ?>
+      </div>
+    </section>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <!-- ════════════════════════════════
+       MENTION "COLLECTION EN PRODUCTION"
+  ════════════════════════════════ -->
+  <?php if ( $en_prod ) : ?>
+  <section class="projet-en-production reveal">
+    <div class="section-inner">
+      <p class="production-notice">
+        <?php esc_html_e( 'This collection is currently in production. New developments will be revealed soon.', 'jtt-portfolio' ); ?>
+      </p>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- ════════════════════════════════
+       NAVIGATION ENTRE PROJETS
+  ════════════════════════════════ -->
+  <nav class="projet-nav reveal" aria-label="<?php esc_attr_e( 'Navigation entre projets', 'jtt-portfolio' ); ?>">
+    <?php
+    $prev = get_previous_post( true, '', 'categorie_projet' );
+    $next = get_next_post(     true, '', 'categorie_projet' );
+    ?>
+    <?php if ( $prev ) : ?>
+      <a href="<?php echo esc_url( get_permalink( $prev ) ); ?>" class="projet-nav-lien projet-nav-prev">
+        <span class="projet-nav-label"><?php esc_html_e( 'Projet précédent', 'jtt-portfolio' ); ?></span>
+        <span class="projet-nav-titre"><?php echo esc_html( get_the_title( $prev ) ); ?></span>
+      </a>
+    <?php else : ?>
+      <span class="projet-nav-vide"></span>
+    <?php endif; ?>
+    <?php if ( $next ) : ?>
+      <a href="<?php echo esc_url( get_permalink( $next ) ); ?>" class="projet-nav-lien projet-nav-next">
+        <span class="projet-nav-label"><?php esc_html_e( 'Projet suivant', 'jtt-portfolio' ); ?></span>
+        <span class="projet-nav-titre"><?php echo esc_html( get_the_title( $next ) ); ?></span>
+      </a>
+    <?php endif; ?>
+  </nav>
+
+  <!-- ════════════════════════════════
+       VOUS AIMEREZ AUSSI
+  ════════════════════════════════ -->
+  <?php if ( $related->have_posts() ) : ?>
+  <section class="projets-similaires reveal" aria-labelledby="similaires-titre">
+    <div class="section-inner">
+      <h2 class="section-title" id="similaires-titre">
+        <?php esc_html_e( 'You may also like', 'jtt-portfolio' ); ?>
+      </h2>
+      <ul class="projets-grille projets-grille--3" role="list">
+        <?php while ( $related->have_posts() ) : $related->the_post(); ?>
+          <li class="projet-card">
+            <a href="<?php the_permalink(); ?>" class="projet-card-inner">
+              <?php if ( has_post_thumbnail() ) : ?>
+                <div class="projet-card-img">
+                  <?php the_post_thumbnail( 'medium_large', array( 'loading' => 'lazy', 'alt' => get_the_title() ) ); ?>
+                </div>
+              <?php endif; ?>
+              <div class="projet-card-body">
+                <h3 class="projet-card-titre"><?php the_title(); ?></h3>
+                <?php
+                $r_annee = get_post_meta( get_the_ID(), 'projet_annee', true );
+                if ( $r_annee ) echo '<p class="projet-card-cat">' . esc_html( $r_annee ) . '</p>';
+                ?>
+              </div>
+            </a>
+          </li>
+        <?php endwhile; wp_reset_postdata(); ?>
+      </ul>
+    </div>
+  </section>
+  <?php endif; ?>
 
 </main>
 
