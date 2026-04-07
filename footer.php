@@ -1,0 +1,46 @@
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="footer-logo">J.T. Tegnan</div>
+            <div class="footer-tagline">Styliste de Mode &mdash; Paris</div>
+        </div>
+        <div class="footer-monogram" aria-hidden="true">
+            <svg width="70" height="70" viewBox="0 0 80 80" fill="none">
+                <circle cx="40" cy="40" r="38" stroke="rgba(240,236,228,0.1)" stroke-width="0.5"/>
+                <text x="50%" y="54%" text-anchor="middle" dominant-baseline="central"
+                      font-family="Cormorant Garamond,serif" font-size="22" font-weight="300"
+                      fill="rgba(240,236,228,0.3)" letter-spacing="3">JTT</text>
+            </svg>
+        </div>
+        <div class="footer-right">
+            <ul class="footer-nav">
+                <li><a href="<?php echo esc_url(home_url('/#work')); ?>">Collections</a></li>
+                <li><a href="<?php echo esc_url(home_url('/#about')); ?>">Biographie</a></li>
+                <li><a href="https://www.instagram.com/j.tegnan" target="_blank" rel="noopener">@j.tegnan</a></li>
+                <li><a href="mailto:julien.tegnan@fr.esmod.net">julien.tegnan@fr.esmod.net</a></li>
+            </ul>
+            <div class="footer-socials">
+                <a href="https://www.instagram.com/j.tegnan" target="_blank" rel="noopener" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="20" height="20" rx="5"/>
+                        <circle cx="12" cy="12" r="5"/>
+                        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </a>
+                <a href="mailto:julien.tegnan@fr.esmod.net" aria-label="Email">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p class="footer-copy">&copy; <?php echo date('Y'); ?> Julien Terence Tegnan. Tous droits r&eacute;serv&eacute;s.</p>
+        <p class="footer-made">Con&ccedil;u avec intention &mdash; Paris</p>
+    </div>
+</footer>
+<?php wp_footer(); ?>
+</body>
+</html>
