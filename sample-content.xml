@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Ceci est un fichier d'export WordPress -->
+<!-- Généré par l'outil d'export WordPress le 2026-04-07 23:00 -->
+<!-- https://wordpress.org/plugins/wordpress-importer/ -->
+
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/">
+
+<channel>
+	<title>JTT Portfolio</title>
+	<link>http://localhost/jtt-portfolio</link>
+	<description>Julien Terence Tegnan, Styliste de Mode</description>
+	<pubDate>Tue, 07 Apr 2026 23:00:00 +0000</pubDate>
+	<language>fr-FR</language>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>http://localhost/jtt-portfolio</wp:base_site_url>
+	<wp:base_blog_url>http://localhost/jtt-portfolio</wp:base_blog_url>
+
+	<!-- Taxonomie : Catégories de projets -->
+	<wp:term>
+		<wp:term_id>1</wp:term_id>
+		<wp:term_taxonomy>categorie_projet</wp:term_taxonomy>
+		<wp:term_slug>reportage</wp:term_slug>
+		<wp:term_name><![CDATA[Reportage]]></wp:term_name>
+	</wp:term>
+	
+	<wp:term>
+		<wp:term_id>2</wp:term_id>
+		<wp:term_taxonomy>categorie_projet</wp:term_taxonomy>
+		<wp:term_slug>photo</wp:term_slug>
+		<wp:term_name><![CDATA[Photo]]></wp:term_name>
+	</wp:term>
+	
+	<wp:term>
+		<wp:term_id>3</wp:term_id>
+		<wp:term_taxonomy>categorie_projet</wp:term_taxonomy>
+		<wp:term_slug>video</wp:term_slug>
+		<wp:term_name><![CDATA[Vidéo]]></wp:term_name>
+	</wp:term>
+
+	<!-- PAGE : Accueil -->
+	<item>
+		<title>Accueil</title>
+		<link>http://localhost/jtt-portfolio/accueil/</link>
+		<pubDate>Tue, 07 Apr 2026 22:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?page_id=2</guid>
+		<description></description>
+		<content:encoded><![CDATA[<!-- Page d'accueil -->
+<h1>Julien Terence Tegnan</h1>
+<p class="sous-titre">Styliste de Mode — Paris, France</p>
+<a href="/travaux" class="btn-voir-travaux">Voir mes travaux</a>]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>2</wp:post_id>
+		<wp:post_date>2026-04-07 22:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 22:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 22:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 22:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>accueil</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>page</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+	</item>
+
+	<!-- PAGE : Travaux -->
+	<item>
+		<title>Travaux</title>
+		<link>http://localhost/jtt-portfolio/travaux/</link>
+		<pubDate>Tue, 07 Apr 2026 22:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?page_id=3</guid>
+		<description></description>
+		<content:encoded><![CDATA[<!-- Page galerie de projets -->
+<h1>Mes Travaux</h1>
+<p>Collection de mes projets créatifs</p>]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>3</wp:post_id>
+		<wp:post_date>2026-04-07 22:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 22:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 22:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 22:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>travaux</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>page</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+	</item>
+
+	<!-- PAGE : Contact -->
+	<item>
+		<title>Contact</title>
+		<link>http://localhost/jtt-portfolio/contact/</link>
+		<pubDate>Tue, 07 Apr 2026 22:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?page_id=4</guid>
+		<description></description>
+		<content:encoded><![CDATA[<!-- Page contact -->]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>4</wp:post_id>
+		<wp:post_date>2026-04-07 22:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 22:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 22:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 22:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>contact</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>page</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+	</item>
+
+	<!-- PROJET 1 : The Suit -->
+	<item>
+		<title>The Suit</title>
+		<link>http://localhost/jtt-portfolio/projet/the-suit/</link>
+		<pubDate>Tue, 07 Apr 2026 21:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?post_type=projet&amp;p=10</guid>
+		<description></description>
+		<content:encoded><![CDATA[]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>10</wp:post_id>
+		<wp:post_date>2026-04-07 21:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 21:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 21:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 21:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>the-suit</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>projet</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="categorie_projet" nicename="reportage"><![CDATA[Reportage]]></category>
+		
+		<!-- Custom Fields / Meta -->
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[annee]]></wp:meta_key>
+			<wp:meta_value><![CDATA[2025]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sous_titre]]></wp:meta_key>
+			<wp:meta_value><![CDATA[ORANGE IS THE NEW BLACK - 2025]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[texte_editorial]]></wp:meta_key>
+			<wp:meta_value><![CDATA[THIS PROJECT MARKS THE FINAL OUTCOME OF MY SECOND YEAR AT ESMOD. THROUGH THIS TAILORED SILHOUETTE, I EXPLORE THE THEME OF REINTEGRATION AFTER INCARCERATION...]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sections_json]]></wp:meta_key>
+			<wp:meta_value><![CDATA[[
+  {
+    "titre": "Moodboard",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Moodboard+1", "https://via.placeholder.com/800x600?text=Moodboard+2"],
+    "texte": ""
+  },
+  {
+    "titre": "Editorial",
+    "type": "texte",
+    "images": [],
+    "texte": "Long texte éditorial sur le projet The Suit..."
+  },
+  {
+    "titre": "Sketchee",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Sketch+1", "https://via.placeholder.com/800x600?text=Sketch+2", "https://via.placeholder.com/800x600?text=Sketch+3"],
+    "texte": ""
+  },
+  {
+    "titre": "Tech Pack",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Tech+Pack+1"],
+    "texte": ""
+  },
+  {
+    "titre": "Shooting",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Shooting+1", "https://via.placeholder.com/800x600?text=Shooting+2", "https://via.placeholder.com/800x600?text=Shooting+3", "https://via.placeholder.com/800x600?text=Shooting+4"],
+    "texte": ""
+  }
+]]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- PROJET 2 : Negus -->
+	<item>
+		<title>Negus</title>
+		<link>http://localhost/jtt-portfolio/projet/negus/</link>
+		<pubDate>Tue, 07 Apr 2026 20:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?post_type=projet&amp;p=11</guid>
+		<description></description>
+		<content:encoded><![CDATA[]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>11</wp:post_id>
+		<wp:post_date>2026-04-07 20:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 20:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 20:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 20:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>negus</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>projet</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="categorie_projet" nicename="photo"><![CDATA[Photo]]></category>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[annee]]></wp:meta_key>
+			<wp:meta_value><![CDATA[2026]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sous_titre]]></wp:meta_key>
+			<wp:meta_value><![CDATA[NEGUS]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[texte_editorial]]></wp:meta_key>
+			<wp:meta_value><![CDATA[Projet photographique explorant l'identité africaine moderne.]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sections_json]]></wp:meta_key>
+			<wp:meta_value><![CDATA[[
+  {
+    "titre": "Moodboard",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Negus+Moodboard+1", "https://via.placeholder.com/800x600?text=Negus+Moodboard+2"],
+    "texte": ""
+  },
+  {
+    "titre": "Shooting",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Negus+Photo+1", "https://via.placeholder.com/800x600?text=Negus+Photo+2", "https://via.placeholder.com/800x600?text=Negus+Photo+3"],
+    "texte": ""
+  }
+]]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- PROJET 3 : Stripology -->
+	<item>
+		<title>Stripology</title>
+		<link>http://localhost/jtt-portfolio/projet/stripology/</link>
+		<pubDate>Tue, 07 Apr 2026 19:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?post_type=projet&amp;p=12</guid>
+		<description></description>
+		<content:encoded><![CDATA[]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>12</wp:post_id>
+		<wp:post_date>2026-04-07 19:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-07 19:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-07 19:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-07 19:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>stripology</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>projet</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="categorie_projet" nicename="reportage"><![CDATA[Reportage]]></category>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[annee]]></wp:meta_key>
+			<wp:meta_value><![CDATA[2024]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sous_titre]]></wp:meta_key>
+			<wp:meta_value><![CDATA[STRIPOLOGY - 2024]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[texte_editorial]]></wp:meta_key>
+			<wp:meta_value><![CDATA[Projet explorant les rayures dans la mode contemporaine.]]></wp:meta_value>
+		</wp:postmeta>
+		
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[sections_json]]></wp:meta_key>
+			<wp:meta_value><![CDATA[[
+  {
+    "titre": "Moodboard",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Stripology+Mood+1"],
+    "texte": ""
+  },
+  {
+    "titre": "Editorial",
+    "type": "texte",
+    "images": [],
+    "texte": "Les rayures comme langage visuel de la rébellion et de l'ordre..."
+  },
+  {
+    "titre": "Figures of Influence",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Influence+1", "https://via.placeholder.com/800x600?text=Influence+2"],
+    "texte": ""
+  },
+  {
+    "titre": "Tech Pack",
+    "type": "galerie",
+    "images": ["https://via.placeholder.com/800x600?text=Stripology+Tech"],
+    "texte": ""
+  }
+]]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+</channel>
+</rss>
