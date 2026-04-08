@@ -130,10 +130,11 @@
   text-transform: uppercase; color: var(--grey); white-space: nowrap;
 }
 
-/* ══ WORK GRID ══ */
-#work { padding: 140px 60px 160px; background: var(--bg); }
+/* ══ WORK GRID — grille éditoriale bento ══ */
+#work { padding: 100px 60px 140px; background: var(--bg); }
+
 .work-header {
-  margin-bottom: 80px;
+  margin-bottom: 64px;
   display: flex; flex-direction: column; align-items: flex-start;
 }
 .work-count {
@@ -141,32 +142,68 @@
   font-size: 11px; letter-spacing: 0.25em;
   color: var(--grey); margin-top: 16px; opacity: 0;
 }
+
+/* Grille bento : 2 colonnes égales, lignes auto */
 .work-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
+/* Carte standard */
 .work-item {
-  position: relative; overflow: hidden;
-  aspect-ratio: 3/4; background: #0a0a0a;
-  opacity: 0;
-  filter: grayscale(100%) brightness(0.5);
-  transition: opacity 0.9s ease, filter 0.9s ease;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
   cursor: none;
+  /* Taille pleine : ratio portrait 2/3 */
+  aspect-ratio: 2/3;
+  /* État initial pour slide-up */
+  opacity: 0;
+  transform: translateY(60px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s ease;
+  filter: grayscale(100%) brightness(0.55);
 }
 a.work-item { text-decoration: none; color: inherit; display: block; }
+
+/* Première carte : grande, occupe 2 lignes */
+.work-item:first-child {
+  grid-row: span 2;
+  aspect-ratio: unset; /* laisse le span décider la hauteur */
+}
+
+/* État visible après scroll */
 .work-item.is-visible {
   opacity: 1;
+  transform: translateY(0);
   filter: grayscale(100%) brightness(1);
 }
+
+/* Délai échelonné pour chaque carte */
+.work-item:nth-child(1) { transition-delay: 0s; }
+.work-item:nth-child(2) { transition-delay: 0.10s; }
+.work-item:nth-child(3) { transition-delay: 0.20s; }
+.work-item:nth-child(4) { transition-delay: 0.12s; }
+.work-item:nth-child(5) { transition-delay: 0.22s; }
+.work-item:nth-child(6) { transition-delay: 0.15s; }
+.work-item:nth-child(7) { transition-delay: 0.25s; }
+.work-item:nth-child(8) { transition-delay: 0.18s; }
+.work-item:nth-child(9) { transition-delay: 0.28s; }
+
 .work-item img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
-  transition: filter 0.4s ease;
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.work-item:hover img { filter: brightness(1.09); }
+/* Zoom subtil au survol — révèle la photo sans la déformer */
+.work-item:hover img { transform: scale(1.04); }
 
+/* Liseré pellicule à gauche */
 .work-film-edge {
   position: absolute; top: 0; left: 0;
   width: 2px; height: 100%;
@@ -174,19 +211,21 @@ a.work-item { text-decoration: none; color: inherit; display: block; }
   z-index: 3; pointer-events: none;
   transition: background 0.4s ease;
 }
-.work-item:hover .work-film-edge { background: rgba(255,255,255,0.58); }
+.work-item:hover .work-film-edge { background: rgba(255,255,255,0.55); }
 
+/* Overlay gradient bas */
 .work-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(180deg,
-    rgba(0,0,0,0.18) 0%,
-    transparent 30%,
-    transparent 55%,
-    rgba(0,0,0,0.55) 100%);
+    rgba(0,0,0,0.10) 0%,
+    transparent 28%,
+    transparent 52%,
+    rgba(0,0,0,0.72) 100%);
   opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
 }
 .work-item:hover .work-overlay { opacity: 1; }
 
+/* Numéro */
 .work-num {
   position: absolute; top: 22px; left: 26px;
   font-family: 'Cormorant Garamond', serif;
@@ -198,18 +237,20 @@ a.work-item { text-decoration: none; color: inherit; display: block; }
 }
 .work-item:hover .work-num { opacity: 1; }
 
+/* Titre */
 .work-title {
   position: absolute; bottom: 28px; left: 28px; right: 24px;
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 300; font-size: 21px;
-  letter-spacing: 0.22em; color: var(--white);
+  font-weight: 300; font-size: clamp(18px, 2vw, 24px);
+  letter-spacing: 0.18em; color: var(--white);
   text-transform: uppercase; line-height: 1.2;
-  transform: translateY(4px);
-  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  transform: translateY(8px);
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 4; pointer-events: none;
 }
 .work-item:hover .work-title { transform: translateY(0); }
 
+/* Année */
 .work-year {
   position: absolute; bottom: 12px; left: 28px;
   font-size: 8px; letter-spacing: 0.38em;

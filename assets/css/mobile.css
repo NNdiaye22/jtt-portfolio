@@ -3,9 +3,7 @@
    Responsive : tablette et mobile
    ============================================== */
 
-/* ══ NAV — tablette (769px–1024px) ══
-   Entre 769 et 1024px : on cache les liens desktop
-   et on affiche le burger (évite la zone morte) */
+/* ══ NAV — tablette (769px–1024px) ══ */
 @media (max-width: 1024px) {
   #site-nav { padding: 20px 32px; }
   .nav-links { display: none; }
@@ -23,13 +21,26 @@
   .hero-quote { font-size: 14px; }
 }
 
-/* ══ WORK ══ */
-@media (max-width: 900px) {
-  #work { padding: 100px 24px 120px; }
-  .work-grid { grid-template-columns: repeat(2, 1fr); }
+/* ══ WORK GRID — tablette ══ */
+@media (max-width: 1024px) {
+  #work { padding: 80px 32px 100px; }
+  /* Grille 2 colonnes maintenue, première carte span 2 lignes */
+  .work-grid { grid-template-columns: repeat(2, 1fr); gap: 3px; }
+  .work-item { aspect-ratio: 3/4; }
+  .work-item:first-child { aspect-ratio: unset; grid-row: span 2; }
 }
+
+/* ══ WORK GRID — mobile ══ */
 @media (max-width: 600px) {
-  .work-grid { grid-template-columns: 1fr; }
+  #work { padding: 60px 16px 80px; }
+  /* 1 seule colonne, toutes les cartes en portrait plein */
+  .work-grid { grid-template-columns: 1fr; gap: 3px; }
+  .work-item { aspect-ratio: 3/4; }
+  .work-item:first-child { grid-row: span 1; aspect-ratio: 3/4; }
+  /* Réactive le titre visible sans hover sur mobile */
+  .work-overlay { opacity: 1; }
+  .work-title   { transform: translateY(0); opacity: 1; }
+  .work-year    { opacity: 1; }
 }
 
 /* ══ MANIFESTO ══ */
@@ -48,7 +59,7 @@
     width: 100%;
     max-width: 560px;
     margin-inline: auto;
-    display: block;      /* force l'affichage */
+    display: block;
   }
   .about-text { transform: none; }
 }
