@@ -1,52 +1,95 @@
-/* ==============================================
+/* =================================================
    JTT Portfolio — loader.js
-   Anime la barre de chargement et masque le loader
-   ============================================== */
+   Anime la barre de chargement, puis lance les scripts
+   via bootGSAP() une fois à 100 %.
+   ================================================= */
 (function () {
-  var loader  = document.getElementById('loader');
-  var bar     = document.getElementById('loaderBar');
-  var pctEl   = document.getElementById('loaderPct');
-  var nav     = document.getElementById('site-nav');
+  var bar  = document.getElementById('loaderBar');
+  var pct  = document.getElementById('loaderPct');
+  var el   = document.getElementById('loader');
+  var nav  = document.getElementById('site-nav');
+  var prog = 0;
+  var done = false;
+  var timer, guard;
 
-  if (!loader || !bar) {
-    // Sécurité : si le loader est absent, on s'assure que la nav est visible
-    if (nav) nav.classList.add('nav-visible');
-    return;
-  }
+  if (!el || !bar) return;
 
-  var progress = 0;
+  function dismiss() {
+    if (done) return;
+    done = true;
+    clearInterval(timer);
+    clearTimeout(guard);
+    bar.style.width  = '100%';
+    if (pct) pct.textContent = '100';
 
-  // Simule une progression fluide jusqu'à 85 %
-  var interval = setInterval(function () {
-    if (progress < 85) {
-      progress += Math.random() * 12 + 3;
-      if (progress > 85) progress = 85;
-      bar.style.width = progress + '%';
-      if (pctEl) pctEl.textContent = Math.round(progress);
-    }
-  }, 80);
-
-  // Quand la page est complètement chargée, finalise à 100 %
-  window.addEventListener('load', function () {
-    clearInterval(interval);
-    progress = 100;
-    bar.style.width = '100%';
-    if (pctEl) pctEl.textContent = '100';
-
-    // Laisse 350 ms pour que l'utilisateur voit 100 %, puis fade out
     setTimeout(function () {
-      loader.classList.add('fade-out');
+      el.classList.add('fade-out');
       if (nav) nav.classList.add('nav-visible');
 
-      // Après la transition CSS (0.85s), cache définitivement le loader
-      loader.addEventListener('transitionend', function () {
-        loader.classList.add('hidden');
-      }, { once: true });
-
-      // Fallback si transitionend ne se déclenche pas
       setTimeout(function () {
-        loader.classList.add('hidden');
-      }, 1000);
-    }, 350);
+        el.classList.add('hidden');
+        if (typeof bootGSAP === 'function') bootGSAP();
+        else if (typeof initFallback === 'function') initFallback();
+      }, 900);
+    }, 300);
+  }
+
+  timer = setInterval(function () {
+    prog += Math.random() * 16 + 5;
+    if (prog >= 100) { dismiss(); return; }
+    bar.style.width = prog + '%';
+    if (pct) pct.textContent = Math.floor(prog);
+  }, 65);
+
+  /* Filet absolu : 2 secondes */
+  guard = setTimeout(dismiss, 2000);
+}());
+
+
+/* =================================================
+   STEP 2 — Charge GSAP après la fermeture du loader
+   ================================================= */
+function bootGSAP() {
+  var s1 = document.createElement('script');
+  s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+  s1.onload = function () {
+    var s2 = document.createElement('script');
+    s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js';
+    s2.onload  = initAll;
+    s2.onerror = initFallback;
+    document.head.appendChild(s2);
+  };
+  s1.onerror = initFallback;
+  document.head.appendChild(s1);
+}
+
+
+/* =================================================
+   FALLBACK si GSAP indisponible
+   ================================================= */
+function initFallback() {
+  var navEl = document.querySelector('#site-nav, nav');
+  if (navEl) navEl.style.opacity = '1';
+  var show = '.monogram,.hero-subtitle,.hero-quote,.hero-buttons,.hero-socials,#scrollHint,.reveal-inner,.work-count,.section-label,.about-image-wrap,.about-text,.manifesto-text';
+  document.querySelectorAll(show).forEach(function (e) {
+    e.style.opacity = '1';
+    e.style.transform = 'none';
   });
-})();
+  if (typeof buildHeroName === 'function') buildHeroName(false);
+  if (typeof initObserver === 'function') initObserver();
+  if (typeof initCursor  === 'function') initCursor();
+}
+
+
+/* =================================================
+   STEP 3 — INIT PRINCIPALE (GSAP disponible)
+   ================================================= */
+function initAll() {
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (typeof buildHeroName       === 'function') buildHeroName(true);
+  if (typeof initNav             === 'function') initNav();
+  if (typeof initScrollEffects   === 'function') initScrollEffects();
+  if (typeof initObserver        === 'function') initObserver();
+  if (typeof initCursor          === 'function') initCursor();
+  if (typeof initAnchorScroll    === 'function') initAnchorScroll();
+}

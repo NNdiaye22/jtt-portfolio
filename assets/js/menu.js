@@ -1,44 +1,53 @@
-/* ==============================================
+/* =================================================
    JTT Portfolio — menu.js
-   Menu mobile overlay (burger / close)
-   ============================================== */
-(function () {
-  var burger    = document.getElementById('navBurger');
-  var overlay   = document.getElementById('navMobile');
-  var closeBtn  = document.getElementById('navMobileClose');
+   Menu mobile overlay + header sticky
+   ================================================= */
+function initMenu() {
+  var burger  = document.querySelector('.nav-burger');
+  var overlay = document.querySelector('.nav-mobile-overlay');
+  var close   = document.querySelector('.nav-overlay-close');
+  var links   = document.querySelectorAll('.nav-overlay-links a');
 
-  if (!burger || !overlay) return;
-
-  function openMenu() {
-    overlay.classList.add('is-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    burger.classList.add('is-open');
-    burger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+  if (burger && overlay) {
+    burger.addEventListener('click', function () {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
   }
 
-  function closeMenu() {
-    overlay.classList.remove('is-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    burger.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+  if (close && overlay) {
+    close.addEventListener('click', function () {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
   }
 
-  burger.addEventListener('click', openMenu);
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-
-  // Ferme le menu quand on clique sur un lien
-  var links = overlay.querySelectorAll('a');
   links.forEach(function (link) {
-    link.addEventListener('click', closeMenu);
+    link.addEventListener('click', function () {
+      if (overlay) overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
   });
+}
 
-  // Ferme avec Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
-      closeMenu();
-      burger.focus();
+/* Header : réduction au scroll */
+function initNav() {
+  if (window.gsap) {
+    gsap.to('#site-nav, nav', { opacity: 1, duration: 1.1, delay: 0.25, ease: 'power2.out' });
+  } else {
+    var navEl = document.querySelector('#site-nav, nav');
+    if (navEl) navEl.style.opacity = '1';
+  }
+
+  var header = document.querySelector('#site-nav, nav');
+  if (!header) return;
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 60) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
     }
   });
-})();
+}
+
+document.addEventListener('DOMContentLoaded', initMenu);

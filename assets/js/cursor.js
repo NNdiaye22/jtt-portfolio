@@ -1,39 +1,35 @@
-/* ==============================================
+/* =================================================
    JTT Portfolio — cursor.js
-   Curseur custom : déplacement + effet grow
-   ============================================== */
-(function () {
-  var cursor = document.getElementById('cursor');
-  if (!cursor) return;
-
-  // Masque le curseur par défaut sur desktop
-  var mouseX = 0, mouseY = 0;
-  var curX = 0, curY = 0;
-  var raf;
+   Curseur personnalisé avec effet magnétique
+   ================================================= */
+function initCursor() {
+  var cur = document.getElementById('cursor');
+  if (!cur) return;
+  var mx = 0, my = 0, cx = 0, cy = 0;
 
   document.addEventListener('mousemove', function (e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mx = e.clientX;
+    my = e.clientY;
   });
 
-  // Animation fluide par interpolation
-  function animateCursor() {
-    curX += (mouseX - curX) * 0.12;
-    curY += (mouseY - curY) * 0.12;
-    cursor.style.left = curX + 'px';
-    cursor.style.top  = curY + 'px';
-    raf = requestAnimationFrame(animateCursor);
+  (function loop() {
+    cx += (mx - cx) * 0.12;
+    cy += (my - cy) * 0.12;
+    cur.style.left = cx + 'px';
+    cur.style.top  = cy + 'px';
+    requestAnimationFrame(loop);
+  }());
+
+  document.querySelectorAll('.work-item, .btn, .hero-socials a, .footer-socials a, a, button').forEach(function (el) {
+    el.addEventListener('mouseenter', function () { cur.classList.add('grow'); });
+    el.addEventListener('mouseleave', function () { cur.classList.remove('grow'); });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  /* Le curseur est inité par initAll() après le loader,
+     mais on l’active aussi en fallback immédiat si nécessaire */
+  if (document.readyState === 'complete' && typeof initCursor !== 'undefined') {
+    initCursor();
   }
-  raf = requestAnimationFrame(animateCursor);
-
-  // Effet grow sur les éléments interactifs
-  var growTargets = document.querySelectorAll('a, button, [role="button"], .projet-card');
-  growTargets.forEach(function (el) {
-    el.addEventListener('mouseenter', function () { cursor.classList.add('grow'); });
-    el.addEventListener('mouseleave', function () { cursor.classList.remove('grow'); });
-  });
-
-  // Cache le curseur custom quand la souris quitte la fenêtre
-  document.addEventListener('mouseleave', function () { cursor.style.opacity = '0'; });
-  document.addEventListener('mouseenter', function () { cursor.style.opacity = '1'; });
-})();
+});
