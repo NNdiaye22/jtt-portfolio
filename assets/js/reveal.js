@@ -5,11 +5,13 @@
 
 /* ══ Work items : slide-up au scroll (tous écrans) ══ */
 function initObserver() {
-  var items = document.querySelectorAll('.work-item');
+  var isMobile = window.innerWidth <= 600;
+  var items    = document.querySelectorAll('.work-item');
   if (!items.length) return;
 
-  /* Seuil abaissé à 0.05 : déclenche dès que 5 % de la carte est visible.
-     Indispensable sur mobile où chaque carte prend toute la largeur. */
+  /* Sur mobile le carousel gère la visibilité dans carousel.js — on ne fait rien */
+  if (isMobile) return;
+
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -63,7 +65,6 @@ function initScrollEffects() {
     );
   }
 
-  /* ★ About : animation DIFFÉRENTE selon l'écran (gsap.matchMedia) */
   var mm = gsap.matchMedia();
 
   /* — Desktop : glissement horizontal — */
@@ -88,18 +89,17 @@ function initScrollEffects() {
     }
   });
 
-  /* — Tablette & mobile : simple fade-up, PAS de translateX — */
-  mm.add('(max-width: 1024px)', function () {
+  /* — Tablette (601–1024px) : fade-up simple — */
+  mm.add('(min-width: 601px) and (max-width: 1024px)', function () {
     var ai = document.querySelector('.about-image-wrap');
     var at = document.querySelector('.about-text');
-    /* Réinitialise immédiatement les inline styles GSAP hérités */
-    if (ai) { gsap.set(ai, { clearProps: 'transform,opacity,x' }); }
-    if (at) { gsap.set(at, { clearProps: 'transform,opacity,x' }); }
+    if (ai) { gsap.set(ai, { clearProps: 'all' }); }
+    if (at) { gsap.set(at, { clearProps: 'all' }); }
     if (ai) {
       gsap.fromTo(ai,
         { opacity: 0, y: 28 },
         { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out',
-          scrollTrigger: { trigger: ai, start: 'top 88%', once: true }
+          scrollTrigger: { trigger: ai, start: 'top 90%', once: true }
         }
       );
     }
@@ -107,10 +107,19 @@ function initScrollEffects() {
       gsap.fromTo(at,
         { opacity: 0, y: 28 },
         { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.12,
-          scrollTrigger: { trigger: at, start: 'top 88%', once: true }
+          scrollTrigger: { trigger: at, start: 'top 90%', once: true }
         }
       );
     }
+  });
+
+  /* — Mobile (≤ 600px) : PAS d'animation GSAP — visible immédiatement — */
+  mm.add('(max-width: 600px)', function () {
+    var ai = document.querySelector('.about-image-wrap');
+    var at = document.querySelector('.about-text');
+    /* On force opacity:1 / transform:none immédiatement, sans ScrollTrigger */
+    if (ai) { gsap.set(ai, { opacity: 1, x: 0, y: 0, clearProps: 'transform' }); }
+    if (at) { gsap.set(at, { opacity: 1, x: 0, y: 0, clearProps: 'transform' }); }
   });
 }
 
