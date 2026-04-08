@@ -1,0 +1,62 @@
+/* ==============================================
+   JTT Portfolio — mobile.css
+   Responsive : tablette et mobile
+   ============================================== */
+
+/* ══ NAV MOBILE ══ */
+@media (max-width: 768px) {
+  #site-nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+}
+
+/* ══ HERO ══ */
+@media (max-width: 768px) {
+  .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
+  .hero-quote { font-size: 14px; }
+}
+
+/* ══ WORK ══ */
+@media (max-width: 900px) {
+  #work { padding: 100px 24px 120px; }
+  .work-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .work-grid { grid-template-columns: 1fr; }
+}
+
+/* ══ MANIFESTO ══ */
+@media (max-width: 768px) {
+  #manifesto { padding: 70px 24px; }
+  .manifesto-text { font-size: clamp(20px, 6vw, 36px); }
+}
+
+/* ══ ABOUT ══ */
+@media (max-width: 900px) {
+  #about { padding: 100px 24px 120px; }
+  .about-inner { grid-template-columns: 1fr; gap: 48px; }
+  .about-image-wrap { aspect-ratio: 4/3; transform: none; }
+  .about-text { transform: none; }
+}
+
+/* ══ SECTION LABEL WRAP ══ */
+@media (max-width: 768px) {
+  .section-label-wrap { padding: 40px 24px 20px; }
+}
+
+/* ══ FOOTER ══ */
+@media (max-width: 768px) {
+  footer { padding: 60px 24px 40px; }
+  .footer-inner { grid-template-columns: 1fr; text-align: center; }
+  .footer-right { align-items: center; }
+  .footer-nav { align-items: center !important; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+/* ══ CURSOR — masqué sur tactile ══ */
+@media (hover: none) {
+  #cursor { display: none; }
+  body { cursor: auto; }
+  .btn { cursor: pointer; }
+  a, button { cursor: pointer; }
+}
