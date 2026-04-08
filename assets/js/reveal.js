@@ -1,14 +1,15 @@
 /* =================================================
    JTT Portfolio — reveal.js
-   IntersectionObserver pour .work-item,
-   .section-divider, .reveal-inner, et effets GSAP
+   IntersectionObserver + GSAP matchMedia
    ================================================= */
 
-/* ══ Tiles de la grille projets : révélation par la lumière ══ */
+/* ══ Work items : slide-up au scroll (tous écrans) ══ */
 function initObserver() {
   var items = document.querySelectorAll('.work-item');
   if (!items.length) return;
 
+  /* Seuil abaissé à 0.05 : déclenche dès que 5 % de la carte est visible.
+     Indispensable sur mobile où chaque carte prend toute la largeur. */
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -16,16 +17,16 @@ function initObserver() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 
   items.forEach(function (item) { observer.observe(item); });
 }
 
-/* ══ Dividers + titres masqués + about (GSAP + ScrollTrigger) ══ */
+/* ══ Effets GSAP adaptés au breakpoint via matchMedia ══ */
 function initScrollEffects() {
-  if (!window.ScrollTrigger) return;
+  if (!window.gsap || !window.ScrollTrigger) return;
 
-  /* Lignes diviseurs */
+  /* Dividers (tous écrans) */
   document.querySelectorAll('[data-divider]').forEach(function (d) {
     ScrollTrigger.create({
       trigger: d, start: 'top 87%',
@@ -33,7 +34,7 @@ function initScrollEffects() {
     });
   });
 
-  /* Titres masqués (.reveal-inner) */
+  /* Titres masqués (tous écrans) */
   document.querySelectorAll('.reveal-inner').forEach(function (el) {
     gsap.fromTo(el,
       { y: '100%', opacity: 0 },
@@ -43,7 +44,7 @@ function initScrollEffects() {
     );
   });
 
-  /* Work count */
+  /* Work count (tous écrans) */
   var wc = document.querySelector('.work-count');
   if (wc) {
     gsap.to(wc, { opacity: 1, duration: 0.7, ease: 'power2.out',
@@ -51,7 +52,7 @@ function initScrollEffects() {
     });
   }
 
-  /* Manifesto */
+  /* Manifesto (tous écrans) */
   var mt = document.querySelector('.manifesto-text');
   if (mt) {
     gsap.fromTo(mt,
@@ -62,22 +63,58 @@ function initScrollEffects() {
     );
   }
 
-  /* About image + texte */
-  var ai = document.querySelector('.about-image-wrap');
-  var at = document.querySelector('.about-text');
-  if (ai) {
-    gsap.to(ai, { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out',
-      scrollTrigger: { trigger: ai, start: 'top 85%', once: true }
-    });
-  }
-  if (at) {
-    gsap.to(at, { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out', delay: 0.15,
-      scrollTrigger: { trigger: at, start: 'top 85%', once: true }
-    });
-  }
+  /* ★ About : animation DIFFÉRENTE selon l'écran (gsap.matchMedia) */
+  var mm = gsap.matchMedia();
+
+  /* — Desktop : glissement horizontal — */
+  mm.add('(min-width: 1025px)', function () {
+    var ai = document.querySelector('.about-image-wrap');
+    var at = document.querySelector('.about-text');
+    if (ai) {
+      gsap.fromTo(ai,
+        { opacity: 0, x: -40 },
+        { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out',
+          scrollTrigger: { trigger: ai, start: 'top 85%', once: true }
+        }
+      );
+    }
+    if (at) {
+      gsap.fromTo(at,
+        { opacity: 0, x: 40 },
+        { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out', delay: 0.15,
+          scrollTrigger: { trigger: at, start: 'top 85%', once: true }
+        }
+      );
+    }
+  });
+
+  /* — Tablette & mobile : simple fade-up, PAS de translateX — */
+  mm.add('(max-width: 1024px)', function () {
+    var ai = document.querySelector('.about-image-wrap');
+    var at = document.querySelector('.about-text');
+    /* Réinitialise immédiatement les inline styles GSAP hérités */
+    if (ai) { gsap.set(ai, { clearProps: 'transform,opacity,x' }); }
+    if (at) { gsap.set(at, { clearProps: 'transform,opacity,x' }); }
+    if (ai) {
+      gsap.fromTo(ai,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out',
+          scrollTrigger: { trigger: ai, start: 'top 88%', once: true }
+        }
+      );
+    }
+    if (at) {
+      gsap.fromTo(at,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.12,
+          scrollTrigger: { trigger: at, start: 'top 88%', once: true }
+        }
+      );
+    }
+  });
 }
 
-/* ══ Hero name — stagger caractère par caractère ══ */
+/* ══ Hero name ══ */
 function buildHeroName(useGsap) {
   var nameEl = document.querySelector('.hero-name');
   if (!nameEl) return;
@@ -85,18 +122,16 @@ function buildHeroName(useGsap) {
   nameEl.innerHTML = '';
   fullName.split('').forEach(function (ch) {
     var sp = document.createElement('span');
-    sp.className   = 'char';
+    sp.className = 'char';
     sp.textContent = ch === ' ' ? '\u00A0' : ch;
     nameEl.appendChild(sp);
   });
-
   if (!useGsap) {
     document.querySelectorAll('.char').forEach(function (c) {
       c.style.opacity = '1'; c.style.transform = 'none';
     });
     return;
   }
-
   gsap.timeline({ delay: 0.05 })
     .to('.monogram',      { opacity: 1, duration: 0.9, ease: 'power2.out' })
     .to('.char',          { opacity: 1, y: 0, duration: 0.42, stagger: 0.024, ease: 'power3.out' }, '-=0.35')
