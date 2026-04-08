@@ -3,15 +3,12 @@
    IntersectionObserver + GSAP matchMedia
    ================================================= */
 
-/* ══ Work items : slide-up au scroll (tous écrans) ══ */
+/* ══ Work items : slide-up / lumière au scroll (tous écrans) ══ */
 function initObserver() {
-  var isMobile = window.innerWidth <= 600;
-  var items    = document.querySelectorAll('.work-item');
+  var items = document.querySelectorAll('.work-item');
   if (!items.length) return;
 
-  /* Sur mobile le carousel gère la visibilité dans carousel.js — on ne fait rien */
-  if (isMobile) return;
-
+  /* Seuil 0.05 : déclenche dès que 5 % de la carte est visible */
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -19,7 +16,7 @@ function initObserver() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
 
   items.forEach(function (item) { observer.observe(item); });
 }
@@ -46,7 +43,7 @@ function initScrollEffects() {
     );
   });
 
-  /* Work count (tous écrans) */
+  /* Work count */
   var wc = document.querySelector('.work-count');
   if (wc) {
     gsap.to(wc, { opacity: 1, duration: 0.7, ease: 'power2.out',
@@ -54,7 +51,7 @@ function initScrollEffects() {
     });
   }
 
-  /* Manifesto (tous écrans) */
+  /* Manifesto */
   var mt = document.querySelector('.manifesto-text');
   if (mt) {
     gsap.fromTo(mt,
@@ -89,37 +86,29 @@ function initScrollEffects() {
     }
   });
 
-  /* — Tablette (601–1024px) : fade-up simple — */
-  mm.add('(min-width: 601px) and (max-width: 1024px)', function () {
+  /* — Tablette + Mobile (≤ 1024px) : fade-up, déclenchement haut de page — */
+  mm.add('(max-width: 1024px)', function () {
     var ai = document.querySelector('.about-image-wrap');
     var at = document.querySelector('.about-text');
-    if (ai) { gsap.set(ai, { clearProps: 'all' }); }
-    if (at) { gsap.set(at, { clearProps: 'all' }); }
+    /* Nettoie les inline styles GSAP du desktop */
+    if (ai) gsap.set(ai, { clearProps: 'all' });
+    if (at) gsap.set(at, { clearProps: 'all' });
     if (ai) {
       gsap.fromTo(ai,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out',
-          scrollTrigger: { trigger: ai, start: 'top 90%', once: true }
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: ai, start: 'top 95%', once: true }
         }
       );
     }
     if (at) {
       gsap.fromTo(at,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', delay: 0.12,
-          scrollTrigger: { trigger: at, start: 'top 90%', once: true }
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.1,
+          scrollTrigger: { trigger: at, start: 'top 95%', once: true }
         }
       );
     }
-  });
-
-  /* — Mobile (≤ 600px) : PAS d'animation GSAP — visible immédiatement — */
-  mm.add('(max-width: 600px)', function () {
-    var ai = document.querySelector('.about-image-wrap');
-    var at = document.querySelector('.about-text');
-    /* On force opacity:1 / transform:none immédiatement, sans ScrollTrigger */
-    if (ai) { gsap.set(ai, { opacity: 1, x: 0, y: 0, clearProps: 'transform' }); }
-    if (at) { gsap.set(at, { opacity: 1, x: 0, y: 0, clearProps: 'transform' }); }
   });
 }
 

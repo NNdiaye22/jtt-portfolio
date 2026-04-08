@@ -4,236 +4,148 @@
    Desktop inchangé (>1024px)
    ============================================== */
 
-/* ══════════════════════════════════════════════
-   NAV
-   ══════════════════════════════════════════════ */
+/* ══ NAV ══ */
 @media (max-width: 1024px) {
   #site-nav { padding: 20px 32px; }
-  .nav-links { display: none; }
+  .nav-links  { display: none; }
   .nav-burger { display: flex; }
 }
 @media (max-width: 768px) {
-  #site-nav { padding: 18px 24px; }
+  #site-nav { padding: 20px 24px; }
 }
 
-/* ══════════════════════════════════════════════
-   HERO
-   ══════════════════════════════════════════════ */
+/* ══ HERO ══ */
 @media (max-width: 768px) {
-  #hero { min-height: 100svh; padding: 0 20px; }
-  .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
-  .hero-quote   { font-size: 14px; max-width: 90vw; }
+  #hero { min-height: 100svh; padding: 0 24px; }
+  .hero-buttons  { flex-direction: column; align-items: center; gap: 12px; }
+  .hero-quote    { font-size: 14px; max-width: 90vw; }
   .hero-subtitle { margin-bottom: 40px; }
 }
 
 /* ══════════════════════════════════════════════
-   WORK — TABLETTE (601px – 1024px)
-   2 colonnes, aspect-ratio 2/3
+   WORK — TABLETTE (601–1024px) : 2 colonnes
    ══════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  #work { padding: 80px 32px 100px; }
+  #work { padding: 100px 24px 120px; }
   .work-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 3px;
+    gap: 2px;
   }
   .work-item {
-    aspect-ratio: 2/3;
+    aspect-ratio: 3/4;
     cursor: pointer;
   }
-  .work-item:nth-child(3n+1),
-  .work-item:nth-child(3n+2),
-  .work-item:nth-child(3n+3) { transition-delay: 0s; }
-  .work-item:nth-child(2n+1) { transition-delay: 0s; }
-  .work-item:nth-child(2n+2) { transition-delay: 0.12s; }
-  .work-overlay   { opacity: 1 !important; }
-  .work-num       { opacity: 0.6 !important; }
-  .work-title     { opacity: 1 !important; transform: translateY(0) !important; font-size: clamp(13px, 2vw, 19px); }
-  .work-year      { opacity: 1 !important; }
+  /* Overlay + infos toujours visibles sur tablette (pas de hover) */
+  .work-overlay  { opacity: 1 !important; }
+  .work-num      { opacity: 0.7 !important; }
+  .work-title    { opacity: 1 !important; transform: translateY(0) !important; font-size: clamp(13px, 2vw, 19px); }
+  .work-year     { opacity: 1 !important; }
   .work-film-edge { display: none; }
+  /* Délais annulés */
+  .work-item:nth-child(n) { transition-delay: 0s; }
+  .work-item:nth-child(2n+2) { transition-delay: 0.1s; }
 }
 
 /* ══════════════════════════════════════════════
-   WORK — MOBILE (≤ 600px)
-   Grille verticale pleine largeur
-   1 carte par ligne, format portrait, images bien visibles
+   WORK — MOBILE (≤ 600px) : 1 colonne pleine largeur
+   Exactement comme index-accueil-v2.html
    ══════════════════════════════════════════════ */
 @media (max-width: 600px) {
-  #work { padding: 60px 0 80px; }
+  #work { padding: 100px 0 120px; }
 
-  /* Grille verticale — 1 carte pleine largeur */
+  /* Grille 1 colonne, scroll vertical normal */
   .work-grid {
-    display: flex;
-    flex-direction: column;
-    grid-template-columns: unset;
-    gap: 3px;
-    overflow: visible;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 
-  /* Chaque carte : pleine largeur, format portrait */
+  /* Carte pleine largeur, format portrait */
   .work-item {
     width: 100%;
     aspect-ratio: 3/4;
-    flex: none;
-    scroll-snap-align: unset;
-    scroll-snap-stop: unset;
-    margin: 0 !important;
-    opacity: 1 !important;            /* Toujours visible — pas d’IO nécessaire */
-    transform: none !important;
-    filter: grayscale(100%) brightness(1) !important;
     cursor: pointer;
-    transition: none;
+    /* L'IntersectionObserver gère opacity/filter via .is-visible */
   }
 
-  /* Image couvre toute la carte */
-  .work-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: none !important;
-  }
-
-  /* Overlay toujours visible */
-  .work-overlay { opacity: 1 !important; }
-
-  /* Titre lisible */
-  .work-title {
+  /* Overlay + infos toujours visibles (pas de hover sur mobile) */
+  .work-overlay  { opacity: 1 !important; }
+  .work-num      { opacity: 0.7 !important; }
+  .work-title    {
     opacity: 1 !important;
     transform: translateY(0) !important;
     font-size: clamp(20px, 6vw, 28px);
     bottom: 40px; left: 24px; right: 20px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
   }
-
-  /* Année */
-  .work-year {
+  .work-year     {
     opacity: 1 !important;
     bottom: 20px; left: 24px;
     font-size: 9px; letter-spacing: 0.35em;
   }
-
-  /* Numéro */
-  .work-num {
-    opacity: 0.55 !important;
-    top: 20px; left: 24px;
-  }
-
-  /* Liseré et zoom désactivés */
   .work-film-edge { display: none; }
   .work-item:hover img { transform: none !important; }
-
-  /* Dots et hint non utilisés en layout vertical */
-  .work-dots, .work-swipe-hint { display: none !important; }
 }
 
-/* Dots et hint masqués par défaut sur desktop/tablette */
-.work-dots, .work-swipe-hint { display: none; }
+/* Dots/hint de l’ancien carousel — inutilisés */
+.work-dots, .work-swipe-hint { display: none !important; }
 
-/* ══════════════════════════════════════════════
-   MANIFESTO
-   ══════════════════════════════════════════════ */
+/* ══ MANIFESTO ══ */
 @media (max-width: 768px) {
   #manifesto { padding: 70px 24px; }
   .manifesto-text { font-size: clamp(20px, 6vw, 36px); }
 }
 
 /* ══════════════════════════════════════════════
-   ABOUT — TABLETTE (601–1024px)
+   ABOUT — TABLETTE + MOBILE (≤ 1024px)
+   1 colonne, aspect-ratio 4/3 (paysage) — exactement comme v2
    ══════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  #about { padding: 80px 32px 100px; }
+  #about { padding: 100px 24px 120px; }
   .about-inner {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 48px;
   }
+  /* Format paysage — comme la v2 de référence */
   .about-image-wrap {
-    order: -1;
+    aspect-ratio: 4/3;
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 3/4;
-    margin-bottom: 48px;
   }
+  /* Cadre décalé désactivé (déborde sur 1 colonne) */
   .about-image-wrap::before { display: none; }
-  .about-text { transform: none !important; }
+  /* Annule le translateX desktop pour l'animation GSAP */
+  .about-text { transform: none; }
 }
 
 /* ══════════════════════════════════════════════
-   ABOUT — MOBILE (≤ 600px)
-   Image pleine largeur edge-to-edge + texte dessous
+   ABOUT — MOBILE (≤ 600px) — ajustements taille de texte
    ══════════════════════════════════════════════ */
 @media (max-width: 600px) {
-  #about { padding: 60px 0 80px; }
-
-  .about-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  /* Image en premier, pleine largeur, toujours visible */
-  .about-image-wrap {
-    order: -1;
-    width: 100%;
-    max-width: 100%;
-    aspect-ratio: 3/4;
-    margin-bottom: 0;
-    opacity: 1 !important;
-    transform: none !important;
-    overflow: hidden;
-  }
-  .about-image-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    filter: grayscale(100%) contrast(1.08);
-    transform: none !important;
-  }
-  .about-image-wrap::before { display: none; }
-
-  /* Texte dessous avec padding */
-  .about-text {
-    padding: 48px 24px 0;
-    opacity: 1 !important;
-    transform: none !important;
-  }
+  #about { padding: 80px 24px 100px; }
+  .about-image-wrap { aspect-ratio: 4/3; }
   .about-text .section-title {
-    font-size: clamp(32px, 10vw, 52px);
-    line-height: 1.05;
-    margin-bottom: 28px;
+    font-size: clamp(28px, 9vw, 48px);
+    margin-bottom: 24px;
   }
   .about-bio {
-    font-size: clamp(16px, 4.5vw, 20px);
+    font-size: clamp(15px, 4vw, 18px);
     line-height: 1.8;
-    margin-bottom: 20px;
   }
-  .about-meta {
-    margin-top: 36px;
-    padding-top: 28px;
-    gap: 16px;
-  }
-  .about-meta-item {
-    flex-direction: column;
-    gap: 4px;
-  }
-  .about-meta-label {
-    min-width: unset;
-    font-size: 7px;
-    letter-spacing: 0.45em;
-  }
-  .about-meta-value { font-size: 16px; }
+  .about-meta { margin-top: 32px; padding-top: 24px; gap: 14px; }
+  .about-meta-item { flex-direction: column; gap: 3px; }
+  .about-meta-label { min-width: unset; font-size: 7px; letter-spacing: 0.45em; }
+  .about-meta-value { font-size: 15px; }
 }
 
-/* ══════════════════════════════════════════════
-   SECTION LABEL WRAP
-   ══════════════════════════════════════════════ */
+/* ══ SECTION LABEL WRAP ══ */
 @media (max-width: 768px) {
   .section-label-wrap { padding: 40px 24px 20px; }
 }
 
-/* ══════════════════════════════════════════════
-   FOOTER
-   ══════════════════════════════════════════════ */
+/* ══ FOOTER ══ */
 @media (max-width: 768px) {
-  footer { padding: 60px 24px 40px; }
+  footer          { padding: 60px 24px 40px; }
   .footer-inner   { grid-template-columns: 1fr; text-align: center; }
   .footer-right   { align-items: center; }
   .footer-nav     { align-items: center !important; }
@@ -241,9 +153,7 @@
   .footer-socials { justify-content: center; }
 }
 
-/* ══════════════════════════════════════════════
-   CURSEUR — désactivé sur touch
-   ══════════════════════════════════════════════ */
+/* ══ CURSEUR — désactivé sur touch ══ */
 @media (hover: none) {
   #cursor { display: none; }
   body { cursor: auto; }
