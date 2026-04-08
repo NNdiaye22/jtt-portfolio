@@ -16,7 +16,7 @@ add_action('after_setup_theme', 'jtt_setup');
 
 // STYLES & SCRIPTS
 function jtt_enqueue_assets() {
-    $v   = '1.0.1';
+    $v   = '1.0.2';
     $uri = get_template_directory_uri();
 
     wp_enqueue_style('jtt-fonts',
@@ -50,6 +50,16 @@ function jtt_enqueue_assets() {
 add_action('wp_enqueue_scripts', 'jtt_enqueue_assets');
 
 
+// IMAGES EXTERNES — utilise l'URL distante si pas de miniature locale
+add_filter('post_thumbnail_url', function($url, $post_id, $size) {
+    if (!$url) {
+        $ext = get_post_meta($post_id, '_thumbnail_external', true);
+        if ($ext) return $ext;
+    }
+    return $url;
+}, 10, 3);
+
+
 // CUSTOM POST TYPE : PROJET
 function jtt_register_cpt() {
     register_post_type('projet', [
@@ -70,7 +80,7 @@ function jtt_register_cpt() {
         'menu_position' => 5,
     ]);
 }
-add_action('init', 'jtt_register_cpt');
+add_action('init', 'jtt_register_cpt);
 
 
 // TAXONOMIE : CATÉGORIE DE PROJET
@@ -169,6 +179,7 @@ function jtt_projet_meta_box_html($post) {
     $editorial  = get_post_meta($post->ID, 'projet_editorial',      true);
     $sections   = get_post_meta($post->ID, 'projet_sections_json',  true);
     $en_prod    = get_post_meta($post->ID, 'projet_en_production',  true);
+    $ext_thumb  = get_post_meta($post->ID, '_thumbnail_external',   true);
     ?>
     <style>
         .jtt-meta-row { margin-bottom: 1.5em; }
@@ -191,6 +202,11 @@ function jtt_projet_meta_box_html($post) {
     <div class="jtt-meta-row">
         <label for="projet_editorial"><?php _e('Texte éditorial (description du projet)', 'jtt-portfolio'); ?></label>
         <textarea id="projet_editorial" name="projet_editorial" rows="8"><?php echo esc_textarea($editorial); ?></textarea>
+    </div>
+
+    <div class="jtt-meta-row">
+        <label for="_thumbnail_external"><?php _e('URL image miniature externe (temporaire — remplacée dès qu\'une image WP est assignée)', 'jtt-portfolio'); ?></label>
+        <input type="text" id="_thumbnail_external" name="_thumbnail_external" value="<?php echo esc_url($ext_thumb); ?>" placeholder="https://cdn.example.com/image.jpg" />
     </div>
 
     <div class="jtt-meta-row">
@@ -229,6 +245,9 @@ function jtt_projet_save_meta($post_id) {
     }
     if (isset($_POST['projet_editorial'])) {
         update_post_meta($post_id, 'projet_editorial', wp_kses_post($_POST['projet_editorial']));
+    }
+    if (isset($_POST['_thumbnail_external'])) {
+        update_post_meta($post_id, '_thumbnail_external', esc_url_raw($_POST['_thumbnail_external']));
     }
     if (isset($_POST['projet_sections_json'])) {
         $json    = stripslashes($_POST['projet_sections_json']);

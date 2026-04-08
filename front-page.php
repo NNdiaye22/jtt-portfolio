@@ -72,16 +72,20 @@
         if ($projets->have_posts()) :
             while ($projets->have_posts()) : $projets->the_post();
                 $num      = str_pad($i, 2, '0', STR_PAD_LEFT);
-                $hero_img = get_field('project_hero_image');
-                $img_url  = $hero_img ? esc_url($hero_img['url']) : get_the_post_thumbnail_url(get_the_ID(), 'large');
-                $img_alt  = $hero_img ? esc_attr($hero_img['alt']) : esc_attr(get_the_title());
-                $year     = get_field('project_year') ?: date('Y');
+                // Priorité : miniature WP locale → URL externe stockée en meta
+                $img_url  = get_the_post_thumbnail_url(get_the_ID(), 'large')
+                            ?: get_post_meta(get_the_ID(), '_thumbnail_external', true);
+                $img_url  = $img_url ? esc_url($img_url) : '';
+                $img_alt  = esc_attr(get_the_title());
+                $year     = get_post_meta(get_the_ID(), 'projet_annee', true) ?: date('Y');
         ?>
         <a href="<?php the_permalink(); ?>" class="work-item" aria-label="<?php the_title(); ?>">
             <div class="work-film-edge" aria-hidden="true"></div>
             <span class="work-num"><?php echo $num; ?></span>
+            <?php if ($img_url) : ?>
             <img src="<?php echo $img_url; ?>" alt="<?php echo $img_alt; ?>"
                  loading="<?php echo $i === 1 ? 'eager' : 'lazy'; ?>">
+            <?php endif; ?>
             <div class="work-overlay" aria-hidden="true"></div>
             <span class="work-title"><?php the_title(); ?></span>
             <span class="work-year">Collection <?php echo esc_html($year); ?></span>
