@@ -24,7 +24,8 @@ $work_line2    = jtt_opt('work_title_line2', 'My Work');
 $mani_1        = jtt_opt('manifesto_line1');
 $mani_2        = jtt_opt('manifesto_line2');
 $mani_3        = jtt_opt('manifesto_line3');
-$show_manifesto = $mani_1 || $mani_2 || $mani_3;
+/* strlen() : vrai même si la valeur est "0" ou un chiffre seul */
+$show_manifesto = strlen($mani_1) || strlen($mani_2) || strlen($mani_3);
 
 $about_img     = jtt_opt('about_image');
 $about_label   = jtt_opt('about_label',  'À Propos');
@@ -39,7 +40,7 @@ $meta_contact  = jtt_opt('about_meta_contact');
 
 <main id="main-content">
 
-<!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+<!-- ═══ HERO ════════════════════════════════════════════════════════════════════ -->
 <section id="hero">
 
     <?php if ($hero_bg) : ?>
@@ -119,7 +120,7 @@ $meta_contact  = jtt_opt('about_meta_contact');
 
 <div class="section-divider" data-divider></div>
 
-<!-- ═══ WORK ════════════════════════════════════════════════════════ -->
+<!-- ═══ WORK ══════════════════════════════════════════════════════════════════════ -->
 <section id="work">
     <div class="work-header">
         <?php if ($work_label) : ?>
@@ -174,21 +175,21 @@ $meta_contact  = jtt_opt('about_meta_contact');
 
 <?php if ($show_manifesto) : ?>
 <div class="section-divider" data-divider></div>
-<!-- ═══ MANIFESTO ═══════════════════════════════════════════════════ -->
+<!-- ═══ MANIFESTO ═══════════════════════════════════════════════════════════════════════ -->
 <section id="manifesto">
     <p class="manifesto-text">
-        <?php if ($mani_1) echo wp_kses($mani_1, ['em'=>[]]); ?>
-        <?php if ($mani_1 && ($mani_2 || $mani_3)) echo '<br>'; ?>
-        <?php if ($mani_2) echo wp_kses($mani_2, ['em'=>[]]); ?>
-        <?php if ($mani_2 && $mani_3) echo '<br>'; ?>
-        <?php if ($mani_3) echo wp_kses($mani_3, ['em'=>[]]); ?>
+        <?php if (strlen($mani_1)) echo wp_kses($mani_1, ['em'=>[],'strong'=>[]]); ?>
+        <?php if (strlen($mani_1) && (strlen($mani_2) || strlen($mani_3))) echo '<br>'; ?>
+        <?php if (strlen($mani_2)) echo wp_kses($mani_2, ['em'=>[],'strong'=>[]]); ?>
+        <?php if (strlen($mani_2) && strlen($mani_3)) echo '<br>'; ?>
+        <?php if (strlen($mani_3)) echo wp_kses($mani_3, ['em'=>[],'strong'=>[]]); ?>
     </p>
 </section>
 <?php endif; ?>
 
 <div class="section-divider" data-divider></div>
 
-<!-- ═══ ABOUT ═══════════════════════════════════════════════════════ -->
+<!-- ═══ ABOUT ═══════════════════════════════════════════════════════════════════════ -->
 <section id="about">
     <div class="about-inner">
 
