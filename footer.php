@@ -19,7 +19,8 @@
                 <li><a href="<?php echo esc_url(home_url('/#contact')); ?>">Contact</a></li>
             </ul>
             <div class="footer-socials">
-                <a href="https://www.linkedin.com/in/julien-tegnan" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-social-link">
+                <?php $linkedin = jtt_opt('linkedin_url'); if ($linkedin) : ?>
+                <a href="<?php echo esc_url($linkedin); ?>" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-social-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         <rect x="2" y="2" width="20" height="20" rx="3"/>
                         <path d="M7 10v7"/>
@@ -28,14 +29,18 @@
                         <circle cx="7" cy="7.5" r="1" fill="currentColor" stroke="none"/>
                     </svg>
                 </a>
-                <a href="https://www.instagram.com/j.tegnan" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="footer-social-link">
+                <?php endif; ?>
+                <?php $instagram = jtt_opt('instagram_url'); if ($instagram) : ?>
+                <a href="<?php echo esc_url($instagram); ?>" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="footer-social-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         <rect x="2" y="2" width="20" height="20" rx="5"/>
                         <circle cx="12" cy="12" r="5"/>
                         <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
                     </svg>
                 </a>
-                <a href="https://open.spotify.com/user/julien.tegnan" target="_blank" rel="noopener noreferrer" aria-label="Spotify" class="footer-social-link">
+                <?php endif; ?>
+                <?php $spotify = jtt_opt('spotify_url'); if ($spotify) : ?>
+                <a href="<?php echo esc_url($spotify); ?>" target="_blank" rel="noopener noreferrer" aria-label="Spotify" class="footer-social-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         <circle cx="12" cy="12" r="10"/>
                         <path d="M8 15.5c2.3-1.2 5.5-1.2 8 0"/>
@@ -43,12 +48,15 @@
                         <path d="M6.5 8.5c3.2-1.7 7.8-1.7 11 0"/>
                     </svg>
                 </a>
-                <a href="mailto:julien.tegnan@fr.esmod.net" aria-label="Envoyer un e-mail" class="footer-social-link">
+                <?php endif; ?>
+                <?php $email = jtt_opt('email_contact'); if ($email) : ?>
+                <a href="mailto:<?php echo esc_attr($email); ?>" aria-label="Envoyer un e-mail" class="footer-social-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         <rect x="2" y="4" width="20" height="16" rx="2"/>
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                     </svg>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

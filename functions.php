@@ -179,7 +179,7 @@ function jtt_sanitize_options($input) {
         'about_meta_formation','about_meta_base',
         'about_meta_specialites','about_meta_contact',
         'footer_tagline','footer_copy',
-        'instagram_url','linkedin_url','email_contact','nav_logo_label',
+        'instagram_url','linkedin_url','spotify_url','email_contact','nav_logo_label',
     ];
     foreach ($text_fields as $field) {
         $clean[$field] = isset($input[$field]) ? sanitize_text_field($input[$field]) : '';
@@ -376,7 +376,14 @@ function jtt_options_page_html() {
     <div class="jtt-section">
         <h2>🔗 Contacts &amp; Réseaux</h2>
         <div class="jtt-row"><label>Instagram URL</label><input type="text" name="jtt_options[instagram_url]" value="<?php echo v($o,'instagram_url');?>" placeholder="https://instagram.com/…" /></div>
-        <div class="jtt-row"><label>LinkedIn URL</label><input type="text" name="jtt_options[linkedin_url]" value="<?php echo v($o,'linkedin_url');?>" /></div>
+        <div class="jtt-row"><label>LinkedIn URL</label><input type="text" name="jtt_options[linkedin_url]" value="<?php echo v($o,'linkedin_url');?>" placeholder="https://linkedin.com/in/…" /></div>
+        <div class="jtt-row">
+            <label>Spotify URL</label>
+            <div>
+                <input type="text" name="jtt_options[spotify_url]" value="<?php echo v($o,'spotify_url');?>" placeholder="https://open.spotify.com/user/…" />
+                <p class="jtt-empty-hint">Laisser vide = icône Spotify masquée dans le footer</p>
+            </div>
+        </div>
         <div class="jtt-row"><label>Email</label><input type="text" name="jtt_options[email_contact]" value="<?php echo v($o,'email_contact');?>" placeholder="julien@exemple.com" /></div>
         <div class="jtt-row"><label>Logo nav (texte)</label><input type="text" name="jtt_options[nav_logo_label]" value="<?php echo v($o,'nav_logo_label','JTT');?>" /></div>
     </div>
