@@ -5,28 +5,41 @@
 function initMenu() {
   var burger  = document.querySelector('.nav-burger');
   var overlay = document.querySelector('.nav-mobile-overlay');
-  var close   = document.querySelector('.nav-overlay-close');
-  var links   = document.querySelectorAll('.nav-overlay-links a');
+  var close   = document.querySelector('.nav-mobile-close');   /* corrigé : était .nav-overlay-close */
+  var links   = document.querySelectorAll('.nav-mobile-links a');
 
   if (burger && overlay) {
     burger.addEventListener('click', function () {
-      overlay.classList.add('open');
+      overlay.classList.add('is-open');              /* corrigé : était 'open' */
+      burger.classList.add('is-open');
       document.body.style.overflow = 'hidden';
     });
   }
 
   if (close && overlay) {
     close.addEventListener('click', function () {
-      overlay.classList.remove('open');
+      overlay.classList.remove('is-open');           /* corrigé : était 'open' */
+      burger.classList.remove('is-open');
       document.body.style.overflow = '';
     });
   }
 
+  /* Fermeture au clic sur un lien du menu */
   links.forEach(function (link) {
     link.addEventListener('click', function () {
-      if (overlay) overlay.classList.remove('open');
+      if (overlay) overlay.classList.remove('is-open');
+      if (burger)  burger.classList.remove('is-open');
       document.body.style.overflow = '';
     });
+  });
+
+  /* Fermeture avec la touche Échap */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay && overlay.classList.contains('is-open')) {
+      overlay.classList.remove('is-open');
+      if (burger) burger.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
   });
 }
 
@@ -50,4 +63,7 @@ function initNav() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initMenu);
+document.addEventListener('DOMContentLoaded', function () {
+  initMenu();
+  initNav();
+});
