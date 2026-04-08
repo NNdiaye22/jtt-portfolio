@@ -3,14 +3,12 @@
    Responsive : tablette et mobile
    ============================================== */
 
-/* ══ NAV — tablette (769px–1024px) ══ */
+/* ══ NAV — tablette & mobile (burger dès 1024px) ══ */
 @media (max-width: 1024px) {
   #site-nav { padding: 20px 32px; }
   .nav-links { display: none; }
   .nav-burger { display: flex; }
 }
-
-/* ══ NAV — mobile ══ */
 @media (max-width: 768px) {
   #site-nav { padding: 18px 24px; }
 }
@@ -21,26 +19,96 @@
   .hero-quote { font-size: 14px; }
 }
 
-/* ══ WORK GRID — tablette ══ */
+/* ================================================================
+   WORK — TABLETTE (601px – 1024px)
+   2 colonnes, aspect-ratio 2/3, titre TOUJOURS visible en bas,
+   animation slide-up allégée (pas de hover)
+   ================================================================ */
 @media (max-width: 1024px) {
   #work { padding: 80px 32px 100px; }
-  /* Grille 2 colonnes maintenue, première carte span 2 lignes */
-  .work-grid { grid-template-columns: repeat(2, 1fr); gap: 3px; }
-  .work-item { aspect-ratio: 3/4; }
-  .work-item:first-child { aspect-ratio: unset; grid-row: span 2; }
+  .work-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+  }
+  .work-item {
+    aspect-ratio: 2/3;
+    cursor: pointer;
+  }
+  /* Délais : colonnes alternantes */
+  .work-item:nth-child(3n+1) { transition-delay: 0s; }
+  .work-item:nth-child(3n+2) { transition-delay: 0.10s; }
+  .work-item:nth-child(3n+3) { transition-delay: 0s; }
+  .work-item:nth-child(2n+1) { transition-delay: 0s; }
+  .work-item:nth-child(2n+2) { transition-delay: 0.12s; }
+
+  /* Overlay toujours visible */
+  .work-overlay { opacity: 1; }
+
+  /* Titre toujours visible, pas de transform */
+  .work-title {
+    opacity: 1;
+    transform: translateY(0);
+    font-size: clamp(14px, 2.2vw, 20px);
+  }
+
+  /* Année toujours visible */
+  .work-year { opacity: 1; }
+
+  /* Numéro toujours visible */
+  .work-num { opacity: 0.6; }
+
+  /* Liseré et zoom désactivés (pas de hover fiable sur tactile) */
+  .work-film-edge { display: none; }
+  .work-item:hover img { transform: none; }
+  .work-item:hover .work-film-edge { background: transparent; }
 }
 
-/* ══ WORK GRID — mobile ══ */
+/* ================================================================
+   WORK — MOBILE (< 601px)
+   1 colonne pleine largeur, aspect-ratio 4/5
+   Titre + année toujours visibles, animation slide-up simplifiée
+   ================================================================ */
 @media (max-width: 600px) {
-  #work { padding: 60px 16px 80px; }
-  /* 1 seule colonne, toutes les cartes en portrait plein */
-  .work-grid { grid-template-columns: 1fr; gap: 3px; }
-  .work-item { aspect-ratio: 3/4; }
-  .work-item:first-child { grid-row: span 1; aspect-ratio: 3/4; }
-  /* Réactive le titre visible sans hover sur mobile */
+  #work { padding: 60px 0 80px; }    /* bord à bord */
+  .work-grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .work-item {
+    aspect-ratio: 4/5;
+    transform: translateY(40px);     /* slide-up réduit */
+    cursor: pointer;
+  }
+  /* Pas de délai échelonné sur mobile — chaque carte arrive seule */
+  .work-item:nth-child(n) { transition-delay: 0s; }
+
+  /* Overlay gradient plein */
   .work-overlay { opacity: 1; }
-  .work-title   { transform: translateY(0); opacity: 1; }
-  .work-year    { opacity: 1; }
+
+  /* Titre gros, toujours visible */
+  .work-title {
+    opacity: 1;
+    transform: translateY(0);
+    font-size: clamp(18px, 5.5vw, 26px);
+    bottom: 32px; left: 20px; right: 16px;
+  }
+
+  /* Année visible */
+  .work-year {
+    opacity: 1;
+    bottom: 16px; left: 20px;
+    font-size: 9px;
+  }
+
+  /* Numéro en haut à gauche, toujours visible */
+  .work-num {
+    opacity: 0.55;
+    top: 18px; left: 20px;
+  }
+
+  /* Pas de liseré ni zoom tactile */
+  .work-film-edge { display: none; }
+  .work-item:hover img { transform: none; }
 }
 
 /* ══ MANIFESTO ══ */
@@ -56,10 +124,8 @@
   .about-image-wrap {
     aspect-ratio: 4/3;
     transform: none;
-    width: 100%;
-    max-width: 560px;
-    margin-inline: auto;
-    display: block;
+    width: 100%; max-width: 560px;
+    margin-inline: auto; display: block;
   }
   .about-text { transform: none; }
 }

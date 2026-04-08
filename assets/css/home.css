@@ -25,9 +25,7 @@
   pointer-events: none; z-index: 1;
 }
 
-.hero-bg {
-  position: absolute; inset: 0; z-index: 0; overflow: hidden;
-}
+.hero-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
 .hero-bg img {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center top;
@@ -45,18 +43,11 @@
 
 .hero-name {
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 300;
-  font-size: clamp(20px, 4.5vw, 50px);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--text);
-  margin-bottom: 8px; line-height: 1;
+  font-weight: 300; font-size: clamp(20px, 4.5vw, 50px);
+  letter-spacing: 0.02em; text-transform: uppercase;
+  color: var(--text); margin-bottom: 8px; line-height: 1;
 }
-.hero-name .char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(28px);
-}
+.hero-name .char { display: inline-block; opacity: 0; transform: translateY(28px); }
 
 .hero-subtitle {
   font-size: 9px; letter-spacing: 0.5em;
@@ -75,19 +66,14 @@
 .hero-quote em { font-style: normal; color: rgba(240,236,228,0.3); font-size: 0.85em; }
 
 .hero-buttons {
-  display: flex; gap: 20px;
-  margin-bottom: 80px; opacity: 0;
+  display: flex; gap: 20px; margin-bottom: 80px; opacity: 0;
   flex-wrap: wrap; justify-content: center;
 }
 .btn {
-  font-size: 9px; font-weight: 300;
-  letter-spacing: 0.35em; text-transform: uppercase;
-  text-decoration: none;
-  padding: 14px 36px;
-  border: 1px solid rgba(240,236,228,0.32);
-  color: var(--text);
-  transition: border-color .4s, background .4s;
-  cursor: none;
+  font-size: 9px; font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase;
+  text-decoration: none; padding: 14px 36px;
+  border: 1px solid rgba(240,236,228,0.32); color: var(--text);
+  transition: border-color .4s, background .4s; cursor: none;
 }
 .btn:hover { border-color: var(--white); background: rgba(255,255,255,0.05); }
 .btn.filled { background: rgba(240,236,228,0.07); border-color: rgba(240,236,228,0.45); }
@@ -109,10 +95,7 @@
   align-items: center; gap: 10px;
   opacity: 0; z-index: 3;
 }
-.scroll-hint span {
-  font-size: 8px; letter-spacing: 0.4em;
-  text-transform: uppercase; color: var(--grey);
-}
+.scroll-hint span { font-size: 8px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--grey); }
 .scroll-line {
   width: 1px; height: 50px;
   background: linear-gradient(to bottom, var(--grey), transparent);
@@ -130,7 +113,10 @@
   text-transform: uppercase; color: var(--grey); white-space: nowrap;
 }
 
-/* ══ WORK GRID — grille éditoriale bento ══ */
+/* ================================================================
+   WORK — DÉSKTOP (>= 1025px)
+   3 colonnes égales, images alignées, titre + année au hover
+   ================================================================ */
 #work { padding: 100px 60px 140px; background: var(--bg); }
 
 .work-header {
@@ -143,89 +129,74 @@
   color: var(--grey); margin-top: 16px; opacity: 0;
 }
 
-/* Grille bento : 2 colonnes égales, lignes auto */
 .work-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 3px;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
-/* Carte standard */
+/* —— Carte commune —— */
 .work-item {
   position: relative;
   overflow: hidden;
   background: #0a0a0a;
-  cursor: none;
-  /* Taille pleine : ratio portrait 2/3 */
-  aspect-ratio: 2/3;
-  /* État initial pour slide-up */
+  aspect-ratio: 3/4;          /* portrait aligné sur toutes les colonnes */
+  /* Animation slide-up état initial */
   opacity: 0;
-  transform: translateY(60px);
+  transform: translateY(56px);
+  filter: grayscale(100%) brightness(0.5);
   transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity   0.85s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.9s ease;
-  filter: grayscale(100%) brightness(0.55);
+    filter    0.9s ease;
+  cursor: none;
 }
 a.work-item { text-decoration: none; color: inherit; display: block; }
 
-/* Première carte : grande, occupe 2 lignes */
-.work-item:first-child {
-  grid-row: span 2;
-  aspect-ratio: unset; /* laisse le span décider la hauteur */
-}
+/* Délais échelonnés par colonne (0, 1, 2 → 0s, 0.12s, 0.24s) */
+.work-item:nth-child(3n+1) { transition-delay: 0s;     }
+.work-item:nth-child(3n+2) { transition-delay: 0.12s;  }
+.work-item:nth-child(3n+3) { transition-delay: 0.24s;  }
 
-/* État visible après scroll */
 .work-item.is-visible {
   opacity: 1;
   transform: translateY(0);
   filter: grayscale(100%) brightness(1);
 }
 
-/* Délai échelonné pour chaque carte */
-.work-item:nth-child(1) { transition-delay: 0s; }
-.work-item:nth-child(2) { transition-delay: 0.10s; }
-.work-item:nth-child(3) { transition-delay: 0.20s; }
-.work-item:nth-child(4) { transition-delay: 0.12s; }
-.work-item:nth-child(5) { transition-delay: 0.22s; }
-.work-item:nth-child(6) { transition-delay: 0.15s; }
-.work-item:nth-child(7) { transition-delay: 0.25s; }
-.work-item:nth-child(8) { transition-delay: 0.18s; }
-.work-item:nth-child(9) { transition-delay: 0.28s; }
-
 .work-item img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
   transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-/* Zoom subtil au survol — révèle la photo sans la déformer */
-.work-item:hover img { transform: scale(1.04); }
+/* Zoom discret au survol — desktop uniquement */
+.work-item:hover img { transform: scale(1.05); }
 
-/* Liseré pellicule à gauche */
+/* Liseré pellicule */
 .work-film-edge {
   position: absolute; top: 0; left: 0;
   width: 2px; height: 100%;
-  background: rgba(255,255,255,0);
+  background: transparent;
   z-index: 3; pointer-events: none;
   transition: background 0.4s ease;
 }
 .work-item:hover .work-film-edge { background: rgba(255,255,255,0.55); }
 
-/* Overlay gradient bas */
+/* Overlay gradient — apparaît au hover */
 .work-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg,
-    rgba(0,0,0,0.10) 0%,
-    transparent 28%,
-    transparent 52%,
-    rgba(0,0,0,0.72) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.08) 0%,
+    transparent 30%,
+    transparent 50%,
+    rgba(0,0,0,0.75) 100%
+  );
   opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
 }
 .work-item:hover .work-overlay { opacity: 1; }
 
-/* Numéro */
+/* Numéro — apparaît au hover */
 .work-num {
   position: absolute; top: 22px; left: 26px;
   font-family: 'Cormorant Garamond', serif;
@@ -233,37 +204,42 @@ a.work-item { text-decoration: none; color: inherit; display: block; }
   font-size: 13px; letter-spacing: 0.12em;
   color: rgba(255,255,255,0.5);
   z-index: 4; opacity: 0;
-  transition: opacity 0.4s ease; pointer-events: none;
+  transition: opacity 0.35s ease; pointer-events: none;
 }
 .work-item:hover .work-num { opacity: 1; }
 
-/* Titre */
+/* Titre — glisse de bas en haut au hover */
 .work-title {
   position: absolute; bottom: 28px; left: 28px; right: 24px;
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 300; font-size: clamp(18px, 2vw, 24px);
+  font-weight: 300; font-size: clamp(16px, 1.6vw, 22px);
   letter-spacing: 0.18em; color: var(--white);
   text-transform: uppercase; line-height: 1.2;
-  transform: translateY(8px);
-  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity   0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 4; pointer-events: none;
 }
-.work-item:hover .work-title { transform: translateY(0); }
+.work-item:hover .work-title { opacity: 1; transform: translateY(0); }
 
-/* Année */
+/* Année — visible seulement au hover */
 .work-year {
   position: absolute; bottom: 12px; left: 28px;
   font-size: 8px; letter-spacing: 0.38em;
   color: rgba(255,255,255,0.38);
-  text-transform: uppercase; z-index: 4; pointer-events: none;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.35s ease 0.05s;
+  z-index: 4; pointer-events: none;
 }
+.work-item:hover .work-year { opacity: 1; }
 
-/* ══ MANIFESTO ══ */
-#manifesto {
-  background: var(--bg-blk);
-  padding: 100px 60px;
-  text-align: center; overflow: hidden;
-}
+/* ================================================================
+   MANIFESTO
+   ================================================================ */
+#manifesto { background: var(--bg-blk); padding: 100px 60px; text-align: center; overflow: hidden; }
 .manifesto-text {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic; font-weight: 300;
@@ -274,14 +250,15 @@ a.work-item { text-decoration: none; color: inherit; display: block; }
 }
 .manifesto-text em { font-style: normal; color: rgba(240,236,228,0.62); }
 
-/* ══ ABOUT ══ */
+/* ================================================================
+   ABOUT
+   ================================================================ */
 #about { background: var(--bg-dark); padding: 140px 60px 160px; }
 .about-inner {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 80px; align-items: center;
   max-width: 1200px; margin: 0 auto;
 }
-
 .about-image-wrap {
   position: relative; overflow: hidden;
   aspect-ratio: 2/3; opacity: 0;
@@ -299,19 +276,15 @@ a.work-item { text-decoration: none; color: inherit; display: block; }
   border: 1px solid rgba(240,236,228,0.11);
   z-index: 1; pointer-events: none;
 }
-
 .about-text { opacity: 0; transform: translateX(40px); }
 .about-text .section-label { margin-bottom: 12px; }
 .about-text .section-title { margin-bottom: 40px; }
-
 .about-bio {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(16px,1.5vw,20px); font-weight: 300;
-  line-height: 1.85; color: rgba(240,236,228,0.68);
-  margin-bottom: 28px;
+  line-height: 1.85; color: rgba(240,236,228,0.68); margin-bottom: 28px;
 }
 .about-bio strong { font-weight: 400; color: var(--text); }
-
 .about-meta {
   display: flex; flex-direction: column; gap: 14px;
   margin-top: 48px; padding-top: 40px;
