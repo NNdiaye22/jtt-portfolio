@@ -15,7 +15,7 @@ add_action('after_setup_theme', 'jtt_setup');
 
 // STYLES & SCRIPTS
 function jtt_enqueue_assets() {
-    $v   = '1.0.6';
+    $v   = '1.0.7';
     $uri = get_template_directory_uri();
 
     wp_enqueue_style('jtt-fonts',
@@ -36,6 +36,11 @@ function jtt_enqueue_assets() {
     wp_enqueue_script('jtt-cursor',  $uri.'/assets/js/cursor.js',  ['jtt-loader'], $v, true);
     wp_enqueue_script('jtt-menu',    $uri.'/assets/js/menu.js',    ['jtt-loader'], $v, true);
     wp_enqueue_script('jtt-reveal',  $uri.'/assets/js/reveal.js',  ['jtt-loader'], $v, true);
+
+    // Carousel mobile Works — front page uniquement
+    if (is_front_page()) {
+        wp_enqueue_script('jtt-carousel', $uri.'/assets/js/carousel.js', ['jtt-reveal'], $v, true);
+    }
 
     if (is_singular('projet')) {
         wp_enqueue_script('jtt-lightbox', $uri.'/assets/js/lightbox.js', ['jtt-loader'], $v, true);
@@ -63,7 +68,7 @@ function jtt_enqueue_admin_assets($hook) {
         'jtt-admin-meta',
         get_template_directory_uri() . '/assets/js/admin-meta.js',
         ['jquery'],
-        '1.0.6',
+        '1.0.7',
         true
     );
 }
