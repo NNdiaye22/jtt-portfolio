@@ -311,5 +311,88 @@
 		</wp:postmeta>
 	</item>
 
+	<!-- PROJET 4 : The Bustier -->
+	<item>
+		<title>The Bustier</title>
+		<link>http://localhost/jtt-portfolio/projet/the-bustier/</link>
+		<pubDate>Wed, 08 Apr 2026 10:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">http://localhost/jtt-portfolio/?post_type=projet&amp;p=13</guid>
+		<description></description>
+		<content:encoded><![CDATA[]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>13</wp:post_id>
+		<wp:post_date>2026-04-08 10:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-04-08 10:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-04-08 10:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-04-08 10:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>the-bustier</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>4</wp:menu_order>
+		<wp:post_type>projet</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="categorie_projet" nicename="reportage"><![CDATA[Reportage]]></category>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_annee]]></wp:meta_key>
+			<wp:meta_value><![CDATA[2026]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_sous_titre]]></wp:meta_key>
+			<wp:meta_value><![CDATA[THE BUSTIER - 2026]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_modele]]></wp:meta_key>
+			<wp:meta_value><![CDATA[Satine Anzem]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_editorial]]></wp:meta_key>
+			<wp:meta_value><![CDATA[The Bustier est une exploration de la relation entre la structure et la peau. Chaque couture est une décision, chaque baleine une conversation entre la contrainte et la liberté. Cette pièce ne se porte pas — elle se vit.
+
+Conçue à l'intersection du corset traditionnel et d'une modernité afropolitaine, la silhouette redessine le corps sans le soumettre, souligne sans effacer. Un équilibre entre la rigueur technique de la couture parisienne et la chaleur des influences culturelles qui traversent le travail de Tegnan.]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_thumbnail_external]]></wp:meta_key>
+			<wp:meta_value><![CDATA[https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/f9a09636-e7e4-4704-87b8-3328888ca6a3,rw,600.png?h=a278a1dd290a10df020cb73d18f4ed5a]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_sections_json]]></wp:meta_key>
+			<wp:meta_value><![CDATA[[
+  {
+    "titre": "Mood Board",
+    "type": "image_simple",
+    "images": ["https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/92ad596d-95cc-419a-ac7c-33bdeb3ee8f1,rw,1920.png?h=c2d6b10353110bb1f8eb07d59837a589"],
+    "texte": ""
+  },
+  {
+    "titre": "Creative Direction",
+    "type": "image_simple",
+    "images": ["https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/a4d913f1-b309-4318-8dd7-355f1ee9490f,rw,1200.png?h=da023c8c1109b53c43206a6e6d11d46d"],
+    "texte": ""
+  },
+  {
+    "titre": "Citation",
+    "type": "citation",
+    "images": [],
+    "texte": "La mode est ce que l'on porte. Ce qui est démodé, c'est ce que portent les autres.",
+    "auteur": "Oscar Wilde"
+  },
+  {
+    "titre": "Shooting",
+    "type": "galerie",
+    "images": ["https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/49801eff-b02e-4698-b75c-942c6bd47ea0,rw,1920.png?h=ecbe7893c8de32f79938cbe2a1fe1f5d"],
+    "texte": ""
+  }
+]]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[projet_credits]]></wp:meta_key>
+			<wp:meta_value><![CDATA[{"Styliste":"Julien Terence Tegnan","Modèle":"Satine Anzem","École":"ESMOD Paris","Année":"2026"}]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
 </channel>
 </rss>
