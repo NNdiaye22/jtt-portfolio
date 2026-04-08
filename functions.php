@@ -15,7 +15,7 @@ add_action('after_setup_theme', 'jtt_setup');
 
 // STYLES & SCRIPTS
 function jtt_enqueue_assets() {
-    $v   = '1.0.5';
+    $v   = '1.0.6';
     $uri = get_template_directory_uri();
 
     wp_enqueue_style('jtt-fonts',
@@ -63,7 +63,7 @@ function jtt_enqueue_admin_assets($hook) {
         'jtt-admin-meta',
         get_template_directory_uri() . '/assets/js/admin-meta.js',
         ['jquery'],
-        '1.0.5',
+        '1.0.6',
         true
     );
 }
@@ -184,7 +184,7 @@ function jtt_sanitize_options($input) {
     foreach ($text_fields as $field) {
         $clean[$field] = isset($input[$field]) ? sanitize_text_field($input[$field]) : '';
     }
-    $url_fields = ['hero_bg_image', 'about_image'];
+    $url_fields = ['hero_bg_image', 'about_image', 'hero_btn_1_url', 'hero_btn_2_url'];
     foreach ($url_fields as $field) {
         $clean[$field] = isset($input[$field]) ? esc_url_raw($input[$field]) : '';
     }
@@ -198,7 +198,7 @@ function jtt_opt($key, $fallback = '') {
 
 // Rendu d'un champ image avec bouton médiathèque
 function jtt_image_field($name, $label, $current_url, $hint = '') {
-    $key  = str_replace('jtt_options[', '', rtrim($name, ']')); // ex. hero_bg_image
+    $key  = str_replace(['jtt_options[', ']'], '', $name);
     $show = $current_url ? 'block' : 'none';
     ?>
     <div class="jtt-row">
@@ -251,6 +251,12 @@ function jtt_options_page_html() {
         .jtt-row input[type=text],.jtt-row textarea{width:100%;padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:13px}
         .jtt-row textarea{min-height:80px;resize:vertical}
         .jtt-hint{color:#888;font-size:11px;margin-top:4px}
+        .jtt-field-group{border:1px solid #e8e8e8;border-radius:6px;padding:14px 16px;margin-bottom:8px;background:#fafafa}
+        .jtt-field-group strong{display:block;font-size:12px;color:#333;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+        .jtt-subrow{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;align-items:center;margin-bottom:8px}
+        .jtt-subrow label{font-size:12px;color:#555;font-weight:500}
+        .jtt-subrow input{width:100%;padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px}
+        .jtt-empty-hint{font-size:11px;color:#aaa;font-style:italic;margin-top:2px}
     </style>
 
     <!-- HERO -->
@@ -262,11 +268,53 @@ function jtt_options_page_html() {
             isset($o['hero_bg_image']) ? $o['hero_bg_image'] : '',
             'Image plein écran derrière le texte du hero'
         ); ?>
-        <div class="jtt-row"><label>Sous-titre</label><input type="text" name="jtt_options[hero_subtitle]" value="<?php echo v($o,'hero_subtitle','Styliste de Mode &nbsp;&bull;&nbsp; Paris');?>" /></div>
-        <div class="jtt-row"><label>Citation</label><input type="text" name="jtt_options[hero_quote]" value="<?php echo v($o,'hero_quote',"La mode est ce que l'on porte.");?>" /></div>
-        <div class="jtt-row"><label>Auteur citation</label><input type="text" name="jtt_options[hero_quote_author]" value="<?php echo v($o,'hero_quote_author','Oscar Wilde');?>" /></div>
-        <div class="jtt-row"><label>Bouton 1</label><input type="text" name="jtt_options[hero_btn_1_label]" value="<?php echo v($o,'hero_btn_1_label','Découvrir mes projets');?>" /></div>
-        <div class="jtt-row"><label>Bouton 2</label><input type="text" name="jtt_options[hero_btn_2_label]" value="<?php echo v($o,'hero_btn_2_label','À propos');?>" /></div>
+        <div class="jtt-row"><label>Sous-titre</label>
+            <div><input type="text" name="jtt_options[hero_subtitle]" value="<?php echo v($o,'hero_subtitle');?>" placeholder="ex. Styliste de Mode &bull; Paris" />
+            <p class="jtt-empty-hint">Laisser vide = non affiché</p></div>
+        </div>
+        <div class="jtt-row"><label>Citation</label>
+            <div><input type="text" name="jtt_options[hero_quote]" value="<?php echo v($o,'hero_quote');?>" placeholder="La mode est…" />
+            <p class="jtt-empty-hint">Laisser vide = non affichée</p></div>
+        </div>
+        <div class="jtt-row"><label>Auteur citation</label>
+            <input type="text" name="jtt_options[hero_quote_author]" value="<?php echo v($o,'hero_quote_author');?>" placeholder="Oscar Wilde" />
+        </div>
+
+        <!-- BOUTON 1 -->
+        <div class="jtt-row">
+            <label>Bouton 1</label>
+            <div class="jtt-field-group">
+                <strong>Bouton principal (fond plein)</strong>
+                <div class="jtt-subrow">
+                    <label>Texte</label>
+                    <div><input type="text" name="jtt_options[hero_btn_1_label]" value="<?php echo v($o,'hero_btn_1_label');?>" placeholder="ex. Découvrir mes projets" />
+                    <p class="jtt-empty-hint">Laisser vide = bouton caché</p></div>
+                </div>
+                <div class="jtt-subrow">
+                    <label>Lien</label>
+                    <div><input type="text" name="jtt_options[hero_btn_1_url]" value="<?php echo v($o,'hero_btn_1_url','#work');?>" placeholder="#work ou /projet/nom" />
+                    <p class="jtt-empty-hint">#work = ancre section, ou URL complète</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOUTON 2 -->
+        <div class="jtt-row">
+            <label>Bouton 2</label>
+            <div class="jtt-field-group">
+                <strong>Bouton secondaire (contour)</strong>
+                <div class="jtt-subrow">
+                    <label>Texte</label>
+                    <div><input type="text" name="jtt_options[hero_btn_2_label]" value="<?php echo v($o,'hero_btn_2_label');?>" placeholder="ex. À propos" />
+                    <p class="jtt-empty-hint">Laisser vide = bouton caché</p></div>
+                </div>
+                <div class="jtt-subrow">
+                    <label>Lien</label>
+                    <div><input type="text" name="jtt_options[hero_btn_2_url]" value="<?php echo v($o,'hero_btn_2_url','#about');?>" placeholder="#about ou /contact" />
+                    <p class="jtt-empty-hint">#about = ancre section, ou URL complète</p></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- WORK -->
@@ -281,9 +329,10 @@ function jtt_options_page_html() {
     <!-- MANIFESTO -->
     <div class="jtt-section">
         <h2>✏️ Manifesto</h2>
-        <div class="jtt-row"><label>Ligne 1</label><input type="text" name="jtt_options[manifesto_line1]" value="<?php echo v($o,'manifesto_line1','Chaque vêtement est une déclaration,');?>" /></div>
-        <div class="jtt-row"><label>Ligne 2</label><input type="text" name="jtt_options[manifesto_line2]" value="<?php echo v($o,'manifesto_line2','chaque tissu une langue,');?>" /></div>
-        <div class="jtt-row"><label>Ligne 3</label><input type="text" name="jtt_options[manifesto_line3]" value="<?php echo v($o,'manifesto_line3','chaque silhouette une histoire.');?>" /></div>
+        <p style="color:#666;font-size:13px;margin-bottom:16px;">Laisser les 3 lignes vides = section entière cachée sur le site.</p>
+        <div class="jtt-row"><label>Ligne 1</label><input type="text" name="jtt_options[manifesto_line1]" value="<?php echo v($o,'manifesto_line1');?>" placeholder="Chaque vêtement est une déclaration," /></div>
+        <div class="jtt-row"><label>Ligne 2</label><input type="text" name="jtt_options[manifesto_line2]" value="<?php echo v($o,'manifesto_line2');?>" placeholder="chaque tissu une langue," /></div>
+        <div class="jtt-row"><label>Ligne 3</label><input type="text" name="jtt_options[manifesto_line3]" value="<?php echo v($o,'manifesto_line3');?>" placeholder="chaque silhouette une histoire." /></div>
     </div>
 
     <!-- ABOUT -->
@@ -293,24 +342,42 @@ function jtt_options_page_html() {
             'jtt_options[about_image]',
             'Photo portrait',
             isset($o['about_image']) ? $o['about_image'] : '',
-            'Photo affichée à gauche dans la section About'
+            'Photo affichée à gauche dans la section About. Laisser vide = pas d\'image.'
         ); ?>
         <div class="jtt-row"><label>Label</label><input type="text" name="jtt_options[about_label]" value="<?php echo v($o,'about_label','À Propos');?>" /></div>
         <div class="jtt-row"><label>Nom complet</label><input type="text" name="jtt_options[about_name]" value="<?php echo v($o,'about_name','Julien Terence Tegnan');?>" /></div>
-        <div class="jtt-row"><label>Bio §1</label><textarea name="jtt_options[about_bio_1]"><?php echo esc_textarea(isset($o['about_bio_1'])?$o['about_bio_1']:'');?></textarea></div>
-        <div class="jtt-row"><label>Bio §2</label><textarea name="jtt_options[about_bio_2]"><?php echo esc_textarea(isset($o['about_bio_2'])?$o['about_bio_2']:'');?></textarea></div>
-        <div class="jtt-row"><label>Formation</label><input type="text" name="jtt_options[about_meta_formation]" value="<?php echo v($o,'about_meta_formation','ESMOD Paris — Diplôme Supérieur');?>" /></div>
-        <div class="jtt-row"><label>Basé</label><input type="text" name="jtt_options[about_meta_base]" value="<?php echo v($o,'about_meta_base','Paris, France');?>" /></div>
-        <div class="jtt-row"><label>Spécialités</label><input type="text" name="jtt_options[about_meta_specialites]" value="<?php echo v($o,'about_meta_specialites','Mode afro-contemporaine');?>" /></div>
-        <div class="jtt-row"><label>Email contact</label><input type="text" name="jtt_options[about_meta_contact]" value="<?php echo v($o,'about_meta_contact','julien.tegnan@fr.esmod.net');?>" /></div>
+        <div class="jtt-row"><label>Bio §1</label>
+            <div><textarea name="jtt_options[about_bio_1]"><?php echo esc_textarea(isset($o['about_bio_1'])?$o['about_bio_1']:'');?></textarea>
+            <p class="jtt-empty-hint">Laisser vide = non affiché</p></div>
+        </div>
+        <div class="jtt-row"><label>Bio §2</label>
+            <div><textarea name="jtt_options[about_bio_2]"><?php echo esc_textarea(isset($o['about_bio_2'])?$o['about_bio_2']:'');?></textarea>
+            <p class="jtt-empty-hint">Laisser vide = non affiché</p></div>
+        </div>
+        <div class="jtt-row"><label>Formation</label>
+            <div><input type="text" name="jtt_options[about_meta_formation]" value="<?php echo v($o,'about_meta_formation');?>" placeholder="ESMOD Paris — Diplôme Supérieur" />
+            <p class="jtt-empty-hint">Laisser vide = ligne cachée</p></div>
+        </div>
+        <div class="jtt-row"><label>Basé</label>
+            <div><input type="text" name="jtt_options[about_meta_base]" value="<?php echo v($o,'about_meta_base');?>" placeholder="Paris, France" />
+            <p class="jtt-empty-hint">Laisser vide = ligne cachée</p></div>
+        </div>
+        <div class="jtt-row"><label>Spécialités</label>
+            <div><input type="text" name="jtt_options[about_meta_specialites]" value="<?php echo v($o,'about_meta_specialites');?>" placeholder="Mode afro-contemporaine" />
+            <p class="jtt-empty-hint">Laisser vide = ligne cachée</p></div>
+        </div>
+        <div class="jtt-row"><label>Email contact</label>
+            <div><input type="text" name="jtt_options[about_meta_contact]" value="<?php echo v($o,'about_meta_contact');?>" placeholder="julien@exemple.com" />
+            <p class="jtt-empty-hint">Laisser vide = ligne cachée</p></div>
+        </div>
     </div>
 
     <!-- CONTACTS -->
     <div class="jtt-section">
         <h2>🔗 Contacts &amp; Réseaux</h2>
-        <div class="jtt-row"><label>Instagram URL</label><input type="text" name="jtt_options[instagram_url]" value="<?php echo v($o,'instagram_url','https://www.instagram.com/j.tegnan');?>" /></div>
-        <div class="jtt-row"><label>LinkedIn URL</label><input type="text" name="jtt_options[linkedin_url]" value="<?php echo v($o,'linkedin_url','');?>" /></div>
-        <div class="jtt-row"><label>Email</label><input type="text" name="jtt_options[email_contact]" value="<?php echo v($o,'email_contact','julien.tegnan@fr.esmod.net');?>" /></div>
+        <div class="jtt-row"><label>Instagram URL</label><input type="text" name="jtt_options[instagram_url]" value="<?php echo v($o,'instagram_url');?>" placeholder="https://instagram.com/…" /></div>
+        <div class="jtt-row"><label>LinkedIn URL</label><input type="text" name="jtt_options[linkedin_url]" value="<?php echo v($o,'linkedin_url');?>" /></div>
+        <div class="jtt-row"><label>Email</label><input type="text" name="jtt_options[email_contact]" value="<?php echo v($o,'email_contact');?>" placeholder="julien@exemple.com" /></div>
         <div class="jtt-row"><label>Logo nav (texte)</label><input type="text" name="jtt_options[nav_logo_label]" value="<?php echo v($o,'nav_logo_label','JTT');?>" /></div>
     </div>
 
