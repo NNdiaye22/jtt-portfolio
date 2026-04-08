@@ -15,7 +15,7 @@ add_action('after_setup_theme', 'jtt_setup');
 
 // STYLES & SCRIPTS
 function jtt_enqueue_assets() {
-    $v   = '1.0.4';
+    $v   = '1.0.5';
     $uri = get_template_directory_uri();
 
     wp_enqueue_style('jtt-fonts',
@@ -48,15 +48,22 @@ function jtt_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'jtt_enqueue_assets');
 
-// Script médiathèque WP dans l'admin (pour les meta boxes)
+
+// ADMIN : médiathèque sur pages projet ET page options
 function jtt_enqueue_admin_assets($hook) {
-    if (!in_array($hook, ['post.php','post-new.php'])) return;
+    $is_projet = in_array($hook, ['post.php', 'post-new.php'])
+                 && isset($_GET['post_type']) || get_post_type() === 'projet'
+                 || (isset($_GET['post']) && get_post_type($_GET['post']) === 'projet');
+    $is_options = ($hook === 'settings_page_jtt-options');
+
+    if (!$is_projet && !$is_options && !in_array($hook, ['post.php','post-new.php'])) return;
+
     wp_enqueue_media();
     wp_enqueue_script(
         'jtt-admin-meta',
         get_template_directory_uri() . '/assets/js/admin-meta.js',
         ['jquery'],
-        '1.0.4',
+        '1.0.5',
         true
     );
 }
@@ -165,7 +172,6 @@ function jtt_sanitize_options($input) {
     $text_fields = [
         'hero_subtitle','hero_quote','hero_quote_author',
         'hero_btn_1_label','hero_btn_2_label',
-        'hero_instagram_url','hero_email',
         'work_label','work_title_line1','work_title_line2',
         'manifesto_line1','manifesto_line2','manifesto_line3',
         'about_label','about_name',
@@ -178,7 +184,7 @@ function jtt_sanitize_options($input) {
     foreach ($text_fields as $field) {
         $clean[$field] = isset($input[$field]) ? sanitize_text_field($input[$field]) : '';
     }
-    $url_fields = ['hero_bg_image','about_image'];
+    $url_fields = ['hero_bg_image', 'about_image'];
     foreach ($url_fields as $field) {
         $clean[$field] = isset($input[$field]) ? esc_url_raw($input[$field]) : '';
     }
@@ -190,10 +196,45 @@ function jtt_opt($key, $fallback = '') {
     return isset($opts[$key]) && $opts[$key] !== '' ? $opts[$key] : $fallback;
 }
 
+// Rendu d'un champ image avec bouton médiathèque
+function jtt_image_field($name, $label, $current_url, $hint = '') {
+    $key  = str_replace('jtt_options[', '', rtrim($name, ']')); // ex. hero_bg_image
+    $show = $current_url ? 'block' : 'none';
+    ?>
+    <div class="jtt-row">
+        <label><?php echo esc_html($label); ?></label>
+        <div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <input
+                    type="text"
+                    id="jtt-field-<?php echo esc_attr($key); ?>"
+                    name="<?php echo esc_attr($name); ?>"
+                    value="<?php echo esc_attr($current_url); ?>"
+                    style="flex:1;"
+                />
+                <button
+                    type="button"
+                    class="button"
+                    data-jtt-pick="<?php echo esc_attr($key); ?>"
+                    style="white-space:nowrap;"
+                >Choisir depuis la médiathèque</button>
+            </div>
+            <?php if ($hint) echo '<p class="jtt-hint">'.esc_html($hint).'</p>'; ?>
+            <img
+                id="jtt-preview-<?php echo esc_attr($key); ?>"
+                src="<?php echo esc_url($current_url); ?>"
+                alt=""
+                style="max-width:220px;max-height:130px;border-radius:4px;margin-top:8px;display:<?php echo $show;?>;border:1px solid #ddd;"
+            />
+        </div>
+    </div>
+    <?php
+}
+
 function jtt_options_page_html() {
     if (!current_user_can('manage_options')) return;
     if (isset($_GET['settings-updated']))
-        add_settings_error('jtt_options', 'jtt_saved', 'Options enregistrées.', 'updated');
+        add_settings_error('jtt_options', 'jtt_saved', 'Options enregistrées avec succès ✔', 'updated');
     settings_errors('jtt_options');
     $o = get_option('jtt_options', []);
     function v($o,$k,$d=''){return esc_attr(isset($o[$k])&&$o[$k]!==''?$o[$k]:$d);}
@@ -205,53 +246,66 @@ function jtt_options_page_html() {
     <style>
         .jtt-section{background:#fff;border:1px solid #ddd;border-radius:6px;padding:24px 28px;margin-bottom:28px}
         .jtt-section h2{margin-top:0;font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:#555;border-bottom:1px solid #eee;padding-bottom:12px}
-        .jtt-row{display:grid;grid-template-columns:200px 1fr;gap:12px 20px;align-items:center;margin-bottom:14px}
-        .jtt-row label{font-weight:600;font-size:13px}
+        .jtt-row{display:grid;grid-template-columns:200px 1fr;gap:12px 20px;align-items:start;margin-bottom:16px}
+        .jtt-row label{font-weight:600;font-size:13px;padding-top:6px}
         .jtt-row input[type=text],.jtt-row textarea{width:100%;padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:13px}
         .jtt-row textarea{min-height:80px;resize:vertical}
         .jtt-hint{color:#888;font-size:11px;margin-top:4px}
-        .jtt-img-preview{max-width:200px;max-height:120px;border-radius:4px;margin-top:6px;display:block}
     </style>
+
+    <!-- HERO -->
     <div class="jtt-section">
         <h2>🖼️ Hero</h2>
-        <div class="jtt-row"><label>Image de fond (URL)</label><div>
-            <input type="text" name="jtt_options[hero_bg_image]" value="<?php echo v($o,'hero_bg_image','https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/120ebdea-6fc0-40ad-acb7-7f7bd166ad34,rw_1200.jpeg?h=7e9e9292dafa2ba8a6a7daf28675aad2'); ?>" />
-            <?php $bg=isset($o['hero_bg_image'])&&$o['hero_bg_image']?$o['hero_bg_image']:'';if($bg):?><img src="<?php echo esc_url($bg);?>" class="jtt-img-preview" alt=""><?php endif;?>
-        </div></div>
+        <?php jtt_image_field(
+            'jtt_options[hero_bg_image]',
+            'Image de fond',
+            isset($o['hero_bg_image']) ? $o['hero_bg_image'] : '',
+            'Image plein écran derrière le texte du hero'
+        ); ?>
         <div class="jtt-row"><label>Sous-titre</label><input type="text" name="jtt_options[hero_subtitle]" value="<?php echo v($o,'hero_subtitle','Styliste de Mode &nbsp;&bull;&nbsp; Paris');?>" /></div>
         <div class="jtt-row"><label>Citation</label><input type="text" name="jtt_options[hero_quote]" value="<?php echo v($o,'hero_quote',"La mode est ce que l'on porte.");?>" /></div>
         <div class="jtt-row"><label>Auteur citation</label><input type="text" name="jtt_options[hero_quote_author]" value="<?php echo v($o,'hero_quote_author','Oscar Wilde');?>" /></div>
         <div class="jtt-row"><label>Bouton 1</label><input type="text" name="jtt_options[hero_btn_1_label]" value="<?php echo v($o,'hero_btn_1_label','Découvrir mes projets');?>" /></div>
         <div class="jtt-row"><label>Bouton 2</label><input type="text" name="jtt_options[hero_btn_2_label]" value="<?php echo v($o,'hero_btn_2_label','À propos');?>" /></div>
     </div>
+
+    <!-- WORK -->
     <div class="jtt-section">
         <h2>💼 Section My Work</h2>
-        <p style="color:#666;font-size:13px;margin-bottom:16px;">Les cartes projets (images, titres, liens) se gèrent directement dans <strong>Projets</strong> (menu de gauche). L'ordre se définit via le champ "Ordre" dans chaque projet (Attributs de la page).</p>
+        <p style="color:#666;font-size:13px;margin-bottom:16px;">Les cartes (images, titres, liens) se gèrent dans <strong>Projets</strong> (menu gauche). L'ordre = champ "Ordre" dans Attributs de la page.</p>
         <div class="jtt-row"><label>Label section</label><input type="text" name="jtt_options[work_label]" value="<?php echo v($o,'work_label','Portfolio 2021–2026');?>" /></div>
         <div class="jtt-row"><label>Titre ligne 1</label><input type="text" name="jtt_options[work_title_line1]" value="<?php echo v($o,'work_title_line1','Discover');?>" /></div>
         <div class="jtt-row"><label>Titre ligne 2</label><input type="text" name="jtt_options[work_title_line2]" value="<?php echo v($o,'work_title_line2','My Work');?>" /></div>
     </div>
+
+    <!-- MANIFESTO -->
     <div class="jtt-section">
         <h2>✏️ Manifesto</h2>
         <div class="jtt-row"><label>Ligne 1</label><input type="text" name="jtt_options[manifesto_line1]" value="<?php echo v($o,'manifesto_line1','Chaque vêtement est une déclaration,');?>" /></div>
         <div class="jtt-row"><label>Ligne 2</label><input type="text" name="jtt_options[manifesto_line2]" value="<?php echo v($o,'manifesto_line2','chaque tissu une langue,');?>" /></div>
         <div class="jtt-row"><label>Ligne 3</label><input type="text" name="jtt_options[manifesto_line3]" value="<?php echo v($o,'manifesto_line3','chaque silhouette une histoire.');?>" /></div>
     </div>
+
+    <!-- ABOUT -->
     <div class="jtt-section">
-        <h2>👤 About</h2>
-        <div class="jtt-row"><label>Photo (URL)</label><div>
-            <input type="text" name="jtt_options[about_image]" value="<?php echo v($o,'about_image','https://cdn.myportfolio.com/4b129293-66fb-48ba-b250-1e6e7c44c8e2/2fbe3839-7309-4d05-aef5-fcfc84aadb16,rw_1200.jpeg?h=83c4acf4c9aa74751eb5e78ed4715d02');?>" />
-            <?php $ai=isset($o['about_image'])&&$o['about_image']?$o['about_image']:'';if($ai):?><img src="<?php echo esc_url($ai);?>" class="jtt-img-preview" alt=""><?php endif;?>
-        </div></div>
+        <h2>👤 Section About (page d'accueil)</h2>
+        <?php jtt_image_field(
+            'jtt_options[about_image]',
+            'Photo portrait',
+            isset($o['about_image']) ? $o['about_image'] : '',
+            'Photo affichée à gauche dans la section About'
+        ); ?>
         <div class="jtt-row"><label>Label</label><input type="text" name="jtt_options[about_label]" value="<?php echo v($o,'about_label','À Propos');?>" /></div>
         <div class="jtt-row"><label>Nom complet</label><input type="text" name="jtt_options[about_name]" value="<?php echo v($o,'about_name','Julien Terence Tegnan');?>" /></div>
-        <div class="jtt-row"><label>Bio §1</label><textarea name="jtt_options[about_bio_1]"><?php echo esc_textarea(isset($o['about_bio_1'])?$o['about_bio_1']:'Julien Terence Tegnan est un styliste de mode parisien…');?></textarea></div>
-        <div class="jtt-row"><label>Bio §2</label><textarea name="jtt_options[about_bio_2]"><?php echo esc_textarea(isset($o['about_bio_2'])?$o['about_bio_2']:'Ses collections explorent les textures de la mémoire…');?></textarea></div>
+        <div class="jtt-row"><label>Bio §1</label><textarea name="jtt_options[about_bio_1]"><?php echo esc_textarea(isset($o['about_bio_1'])?$o['about_bio_1']:'');?></textarea></div>
+        <div class="jtt-row"><label>Bio §2</label><textarea name="jtt_options[about_bio_2]"><?php echo esc_textarea(isset($o['about_bio_2'])?$o['about_bio_2']:'');?></textarea></div>
         <div class="jtt-row"><label>Formation</label><input type="text" name="jtt_options[about_meta_formation]" value="<?php echo v($o,'about_meta_formation','ESMOD Paris — Diplôme Supérieur');?>" /></div>
         <div class="jtt-row"><label>Basé</label><input type="text" name="jtt_options[about_meta_base]" value="<?php echo v($o,'about_meta_base','Paris, France');?>" /></div>
         <div class="jtt-row"><label>Spécialités</label><input type="text" name="jtt_options[about_meta_specialites]" value="<?php echo v($o,'about_meta_specialites','Mode afro-contemporaine');?>" /></div>
         <div class="jtt-row"><label>Email contact</label><input type="text" name="jtt_options[about_meta_contact]" value="<?php echo v($o,'about_meta_contact','julien.tegnan@fr.esmod.net');?>" /></div>
     </div>
+
+    <!-- CONTACTS -->
     <div class="jtt-section">
         <h2>🔗 Contacts &amp; Réseaux</h2>
         <div class="jtt-row"><label>Instagram URL</label><input type="text" name="jtt_options[instagram_url]" value="<?php echo v($o,'instagram_url','https://www.instagram.com/j.tegnan');?>" /></div>
@@ -259,11 +313,14 @@ function jtt_options_page_html() {
         <div class="jtt-row"><label>Email</label><input type="text" name="jtt_options[email_contact]" value="<?php echo v($o,'email_contact','julien.tegnan@fr.esmod.net');?>" /></div>
         <div class="jtt-row"><label>Logo nav (texte)</label><input type="text" name="jtt_options[nav_logo_label]" value="<?php echo v($o,'nav_logo_label','JTT');?>" /></div>
     </div>
+
+    <!-- FOOTER -->
     <div class="jtt-section">
         <h2>📌 Footer</h2>
         <div class="jtt-row"><label>Tagline</label><input type="text" name="jtt_options[footer_tagline]" value="<?php echo v($o,'footer_tagline','Styliste de Mode — Paris');?>" /></div>
         <div class="jtt-row"><label>Copyright</label><input type="text" name="jtt_options[footer_copy]" value="<?php echo v($o,'footer_copy','© 2026 Julien Terence Tegnan. Tous droits réservés.');?>" /></div>
     </div>
+
     <?php submit_button('Enregistrer les options'); ?>
     </form></div>
     <?php
@@ -271,17 +328,16 @@ function jtt_options_page_html() {
 
 
 // ============================================================
-// META BOX PROJETS — Interface visuelle complète
+// META BOX PROJETS
 // ============================================================
 
 function jtt_projet_meta_boxes() {
-    add_meta_box('jtt_infos',    'Informations du projet',  'jtt_mb_infos',    'projet', 'normal', 'high');
-    add_meta_box('jtt_cover',   'Image de couverture (grille accueil)', 'jtt_mb_cover', 'projet', 'side',   'high');
-    add_meta_box('jtt_sections','Sections de la page projet', 'jtt_mb_sections', 'projet', 'normal', 'default');
+    add_meta_box('jtt_infos',    'Informations du projet',             'jtt_mb_infos',    'projet', 'normal', 'high');
+    add_meta_box('jtt_cover',   'Image de couverture (grille accueil)','jtt_mb_cover',   'projet', 'side',   'high');
+    add_meta_box('jtt_sections','Sections de la page projet',         'jtt_mb_sections', 'projet', 'normal', 'default');
 }
 add_action('add_meta_boxes', 'jtt_projet_meta_boxes');
 
-// --- MB : Informations de base ---
 function jtt_mb_infos($post) {
     wp_nonce_field('jtt_projet_save', 'jtt_projet_nonce');
     $annee      = get_post_meta($post->ID, 'projet_annee',         true);
@@ -298,31 +354,33 @@ function jtt_mb_infos($post) {
     <div class="jtt-mb"><label>Année</label><input type="text" name="projet_annee" value="<?php echo esc_attr($annee);?>" placeholder="2025" /></div>
     <div class="jtt-mb"><label>Sous-titre <span class="jtt-mb-hint">(ex. ORANGE IS THE NEW BLACK — 2025)</span></label>
         <input type="text" name="projet_sous_titre" value="<?php echo esc_attr($sous_titre);?>" /></div>
-    <div class="jtt-mb"><label>Texte éditorial <span class="jtt-mb-hint">(intro affichée en haut de la page projet)</span></label>
+    <div class="jtt-mb"><label>Texte éditorial <span class="jtt-mb-hint">(intro en haut de la page projet)</span></label>
         <textarea name="projet_editorial"><?php echo esc_textarea($editorial);?></textarea></div>
     <div class="jtt-mb"><label><input type="checkbox" name="projet_en_production" value="1" <?php checked($en_prod,'1');?> /> Collection en production</label></div>
     <?php
 }
 
-// --- MB : Image de couverture externe ---
 function jtt_mb_cover($post) {
     $ext = get_post_meta($post->ID, '_thumbnail_external', true);
     ?>
     <style>
-        #jtt-cover-preview{max-width:100%;border-radius:4px;margin-top:8px;display:<?php echo $ext?'block':'none';?>}
-        .jtt-cover-btn{margin-top:8px;font-size:12px}
+        #jtt-cover-preview{max-width:100%;border-radius:4px;margin-top:8px;display:<?php echo $ext?'block':'none';?>;border:1px solid #eee;}
     </style>
     <p style="font-size:12px;color:#666;margin-bottom:8px;">
-        Assigne d'abord l'<strong>Image mise en avant</strong> WP (panneau de droite).<br>
-        Ou colle ici une URL externe (utilisée uniquement si pas d'image WP).
+        Priorité : <strong>Image mise en avant</strong> WP (panneau de droite).<br>
+        Sinon, utilise ce champ pour une URL externe.
     </p>
-    <input type="text" name="_thumbnail_external" id="jtt-ext-url" value="<?php echo esc_url($ext);?>" placeholder="https://cdn.example.com/image.jpg" style="width:100%;font-size:12px;" />
+    <input type="text" name="_thumbnail_external" id="jtt-ext-url"
+           value="<?php echo esc_url($ext);?>"
+           placeholder="https://cdn.example.com/image.jpg"
+           style="width:100%;font-size:12px;" />
     <img id="jtt-cover-preview" src="<?php echo esc_url($ext);?>" alt="" />
-    <button type="button" class="button jtt-cover-btn" id="jtt-pick-cover">Choisir depuis la médiathèque</button>
+    <button type="button" class="button" id="jtt-pick-cover" style="margin-top:8px;font-size:12px;">
+        Choisir depuis la médiathèque
+    </button>
     <?php
 }
 
-// --- MB : Sections de la page projet ---
 function jtt_mb_sections($post) {
     $sections_raw = get_post_meta($post->ID, 'projet_sections_json', true);
     $sections = $sections_raw ? json_decode($sections_raw, true) : [];
@@ -345,11 +403,7 @@ function jtt_mb_sections($post) {
         .jtt-add-section{margin-top:4px}
         .jtt-section-handle{cursor:move;margin-right:6px;color:#999}
     </style>
-
-    <p style="font-size:12px;color:#666;margin-bottom:12px;">
-        Ajoute autant de sections que tu veux (Moodboard, Shooting, Tech Pack…). Chaque section peut avoir un titre, un texte et/ou des images.
-    </p>
-
+    <p style="font-size:12px;color:#666;margin-bottom:12px;">Ajoute autant de sections que tu veux (Moodboard, Shooting, Tech Pack…). Chaque section peut avoir un titre, un texte et/ou des images.</p>
     <div id="jtt-sections-list" class="jtt-sections-wrap">
         <?php foreach ($sections as $i => $s) :
             $s_titre  = esc_attr($s['titre']  ?? '');
@@ -360,7 +414,7 @@ function jtt_mb_sections($post) {
         <div class="jtt-section-item" data-index="<?php echo $i;?>">
             <h4><span class="jtt-section-handle">☰</span><span class="jtt-section-num"><?php echo $i+1;?></span> Section</h4>
             <button type="button" class="jtt-section-rm" data-action="remove-section">&times; Supprimer</button>
-            <div class="jtt-si-row"><label>Titre de la section</label>
+            <div class="jtt-si-row"><label>Titre</label>
                 <input type="text" class="jtt-s-titre" value="<?php echo $s_titre;?>" placeholder="ex. Moodboard, Shooting…" /></div>
             <div class="jtt-si-row"><label>Type</label>
                 <select class="jtt-s-type">
@@ -392,7 +446,6 @@ function jtt_mb_sections($post) {
         </div>
         <?php endforeach; ?>
     </div>
-
     <button type="button" class="button button-primary jtt-add-section">+ Ajouter une section</button>
     <input type="hidden" name="projet_sections_json" id="jtt-sections-json" value="<?php echo esc_attr($sections_raw);?>" />
     <?php
@@ -427,7 +480,7 @@ function jtt_projet_save_meta($post_id) {
 add_action('save_post_projet', 'jtt_projet_save_meta');
 
 
-// FALLBACK MENU (si aucun menu assigné)
+// FALLBACK MENU
 function jtt_nav_fallback() {
     echo '<ul class="nav-links" role="list">';
     echo '<li><a href="'.esc_url(home_url('/#work')).'">Travaux</a></li>';

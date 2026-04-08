@@ -1,11 +1,66 @@
 /**
- * admin-meta.js — Interface visuelle des meta boxes Projet
- * Gère : ajout/suppression de sections, ajout d'images via médiathèque WP,
- * et sérialisation vers le champ caché JSON avant sauvegarde.
+ * admin-meta.js
+ * - Meta boxes Projet : sections, images, couverture
+ * - Page JTT Options : boutons médiathèque pour hero_bg_image et about_image
  */
 jQuery(function ($) {
 
-    // ── Sérialisation JSON → champ caché ──────────────────────────────
+    // ================================================================
+    // UTILITAIRE : ouvre la médiathèque et retourne l'URL choisie
+    // ================================================================
+    function pickImage(opts) {
+        var frame = wp.media({
+            title:    opts.title   || 'Choisir une image',
+            button:   { text: opts.btn || 'Utiliser cette image' },
+            multiple: false,
+            library:  { type: 'image' }
+        });
+        frame.on('select', function () {
+            var att = frame.state().get('selection').first().toJSON();
+            var url = (att.sizes && att.sizes.large) ? att.sizes.large.url : att.url;
+            opts.onSelect(url, att);
+        });
+        frame.open();
+        return frame;
+    }
+
+    // ================================================================
+    // PAGE JTT OPTIONS (Réglages → JTT Options)
+    // ================================================================
+
+    // Générique : chaque bouton [data-pick] cible un input + un preview
+    // Structure attendue dans le HTML :
+    //   <input type="text" id="jtt-field-{key}" name="jtt_options[{key}]" />
+    //   <img   id="jtt-preview-{key}" />
+    //   <button data-pick="{key}">Choisir…</button>
+    $(document).on('click', '[data-jtt-pick]', function () {
+        var key = $(this).data('jtt-pick');
+        pickImage({
+            title: 'Choisir l\'image',
+            btn:   'Utiliser cette image',
+            onSelect: function (url) {
+                $('#jtt-field-' + key).val(url);
+                var $prev = $('#jtt-preview-' + key);
+                $prev.attr('src', url).show();
+            }
+        });
+    });
+
+    // Mise à jour live de la preview quand on tape une URL manuellement
+    $(document).on('input', '[id^="jtt-field-"]', function () {
+        var key = this.id.replace('jtt-field-', '');
+        var url = $(this).val();
+        var $prev = $('#jtt-preview-' + key);
+        if (url) $prev.attr('src', url).show();
+        else $prev.hide();
+    });
+
+
+    // ================================================================
+    // META BOXES PROJET
+    // ================================================================
+
+    // ── Sérialisation JSON → champ caché ─────────────────────────
     function serialize() {
         var sections = [];
         $('#jtt-sections-list .jtt-section-item').each(function () {
@@ -25,11 +80,9 @@ jQuery(function ($) {
         });
         $('#jtt-sections-json').val(JSON.stringify(sections));
     }
-
-    // Sérialise avant toute soumission du formulaire
     $('form#post').on('submit', serialize);
 
-    // ── HTML d'une nouvelle section vide ─────────────────────────────
+    // ── HTML d'une nouvelle section vide ────────────────────────
     function newSectionHtml(index) {
         return [
             '<div class="jtt-section-item" data-index="' + index + '">',
@@ -52,51 +105,41 @@ jQuery(function ($) {
         ].join('');
     }
 
-    // ── Ajouter une section ───────────────────────────────────────────
     $(document).on('click', '.jtt-add-section', function () {
         var count = $('#jtt-sections-list .jtt-section-item').length;
         $('#jtt-sections-list').append(newSectionHtml(count));
         renumber();
     });
 
-    // ── Supprimer une section ─────────────────────────────────────────
     $(document).on('click', '[data-action="remove-section"]', function () {
         if (!confirm('Supprimer cette section ?')) return;
         $(this).closest('.jtt-section-item').remove();
         renumber();
     });
 
-    // ── Supprimer une image ───────────────────────────────────────────
     $(document).on('click', '[data-action="remove-img"]', function () {
         $(this).closest('.jtt-img-thumb').remove();
     });
 
-    // ── Renuméroter les sections ──────────────────────────────────────
     function renumber() {
         $('#jtt-sections-list .jtt-section-item').each(function (i) {
             $(this).attr('data-index', i).find('.jtt-section-num').text(i + 1);
         });
     }
 
-    // ── Médiathèque WP : sélecteur d'images ─────────────────────────
+    // ── Sélecteur multi-images pour les sections ───────────────────
     var mediaFrame = null;
     var $currentSection = null;
 
     $(document).on('click', '.jtt-add-imgs', function () {
         $currentSection = $(this).closest('.jtt-section-item');
-
-        if (mediaFrame) {
-            mediaFrame.open();
-            return;
-        }
-
+        if (mediaFrame) { mediaFrame.open(); return; }
         mediaFrame = wp.media({
             title:    'Sélectionner les images',
             button:   { text: 'Ajouter les images sélectionnées' },
             multiple: true,
             library:  { type: 'image' }
         });
-
         mediaFrame.on('select', function () {
             var attachments = mediaFrame.state().get('selection').toArray();
             var $list = $currentSection.find('.jtt-images-list');
@@ -114,40 +157,30 @@ jQuery(function ($) {
                 );
             });
         });
-
         mediaFrame.open();
     });
 
-    // ── Médiathèque : image de couverture externe ──────────────────
+    // ── Image de couverture externe (meta box projet) ──────────────
     $('#jtt-pick-cover').on('click', function () {
-        var coverFrame = wp.media({
-            title:   'Choisir l\'image de couverture',
-            button:  { text: 'Utiliser cette image' },
-            multiple: false,
-            library: { type: 'image' }
+        pickImage({
+            title: 'Choisir l\'image de couverture',
+            btn:   'Utiliser cette image',
+            onSelect: function (url) {
+                $('#jtt-ext-url').val(url);
+                $('#jtt-cover-preview').attr('src', url).show();
+            }
         });
-        coverFrame.on('select', function () {
-            var att  = coverFrame.state().get('selection').first().toJSON();
-            var url  = att.sizes && att.sizes.large ? att.sizes.large.url : att.url;
-            $('#jtt-ext-url').val(url);
-            $('#jtt-cover-preview').attr('src', url).show();
-        });
-        coverFrame.open();
     });
 
-    // Mise à jour preview URL externe saisie manuellement
     $('#jtt-ext-url').on('input', function () {
         var url = $(this).val();
         if (url) $('#jtt-cover-preview').attr('src', url).show();
         else $('#jtt-cover-preview').hide();
     });
 
-    // Drag & drop pour réordonner les sections (jQuery UI Sortable)
+    // Drag & drop réordonnement sections
     if ($.fn.sortable) {
-        $('#jtt-sections-list').sortable({
-            handle: '.jtt-section-handle',
-            update: renumber
-        });
+        $('#jtt-sections-list').sortable({ handle: '.jtt-section-handle', update: renumber });
     }
 
 });
