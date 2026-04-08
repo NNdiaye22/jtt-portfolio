@@ -80,7 +80,7 @@ function jtt_register_cpt() {
         'menu_position' => 5,
     ]);
 }
-add_action('init', 'jtt_register_cpt);
+add_action('init', 'jtt_register_cpt');
 
 
 // TAXONOMIE : CATÉGORIE DE PROJET
